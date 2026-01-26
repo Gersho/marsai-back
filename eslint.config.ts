@@ -1,0 +1,60 @@
+import eslint from "@eslint/js";
+import tseslint from "typescript-eslint";
+import globals from "globals";
+import prettierConfig from "eslint-config-prettier";
+import { defineConfig } from "eslint/config";
+
+export default defineConfig(
+  // 1. Global ignores (replaces .eslintignore)
+  {
+    ignores: ["dist", "node_modules"],
+  },
+
+  // 2. Base ESLint and TypeScript configurations
+  eslint.configs.recommended,
+  ...tseslint.configs.recommended,
+
+  // 3. Configuration specific to Node/Express
+  {
+    languageOptions: {
+      globals: {
+        ...globals.node, // Adds 'process', 'console', 'module', etc.
+        ...globals.es2024,
+      },
+      parserOptions: {
+        project: true, // Required if you use type-aware rules (optional)
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    rules: {
+      // --- Express & Node Specific Customizations ---
+
+      // Allow console.log/error (common in server-side apps), but warn generally
+      "no-console": ["warn", { allow: ["info", "warn", "error"] }],
+
+      // Handle unused variables (e.g., ignoring '_next' in Express middleware)
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+
+      // Enforce specific naming conventions (Optional but good practice)
+      "@typescript-eslint/naming-convention": [
+        "warn",
+        { selector: "default", format: ["camelCase"] },
+        { selector: "variable", format: ["camelCase", "UPPER_CASE"] },
+        { selector: "typeLike", format: ["PascalCase"] },
+      ],
+
+      // Ensure promises are handled (Great for catching missing 'await' in async Express handlers)
+      "@typescript-eslint/no-floating-promises": "warn",
+    },
+  },
+
+  // 4. Prettier Config (Must be last to override other formatting rules)
+  prettierConfig,
+);

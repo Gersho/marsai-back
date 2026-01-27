@@ -1,10 +1,14 @@
 import express from 'express';
-import dotenv from 'dotenv';
+import db from './database/connection.js';
 
-dotenv.config();
+console.log(process.env.MYSQL_USER);
+console.log(process.env.MYSQL_PASSWORD);
+console.log(process.env.MYSQL_DATABASE);
+const res = await db.query('DESCRIBE tag');
+console.log(res[0]);
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5001;
 
 app.get('/', (_req, res) => {
   res.send('Welcome to the Express + TypeScript Server!');

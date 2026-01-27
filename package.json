@@ -5,9 +5,8 @@
   "main": "server.js",
   "scripts": {
     "build": "tsc",
-    "start:dev": "ts-node src/server.ts",
-    "start": "npm run build && node ./dist/server.js",
-    "dev": "nodemon src/server.ts",
+    "start": "npm run build && node --env-file=.env ./dist/server.js",
+    "dev": "tsx watch --env-file=.env src/server.ts",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
     "format": "npx prettier --write \"src/**/*.ts\"",
@@ -27,9 +26,8 @@
   "homepage": "https://github.com/hichem-tlidjane/marsai-back#readme",
   "dependencies": {
     "cors": "^2.8.6",
-    "dotenv": "^17.2.3",
     "express": "^5.2.1",
-    "nodemon": "^3.1.11",
+    "mysql2": "^3.16.2",
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
@@ -45,6 +43,7 @@
     "husky": "^9.1.7",
     "jiti": "^2.6.1",
     "prettier": "^3.8.1",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.53.1"
   }

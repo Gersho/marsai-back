@@ -45,7 +45,7 @@ export default defineConfig(
       // Enforce specific naming conventions (Optional but good practice)
       '@typescript-eslint/naming-convention': [
         'warn',
-        { selector: 'default', format: ['camelCase'] },
+        { selector: 'default', format: ['camelCase', 'PascalCase'] },
         { selector: 'variable', format: ['camelCase', 'UPPER_CASE'] },
         { selector: 'typeLike', format: ['PascalCase'] },
       ],

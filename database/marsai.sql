@@ -1,7 +1,3 @@
--- Création de la base de données
-CREATE DATABASE IF NOT EXISTS marsai;
-USE marsai;
-
 -- Table user
 CREATE TABLE IF NOT EXISTS `user` (
     `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -97,7 +93,7 @@ CREATE TABLE IF NOT EXISTS `role_user` (
     `user_id` INT NOT NULL,
     FOREIGN KEY(`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE,
     `role_id` INT NULL,
-    FOREIGN KEY(`role_id`) REFERENCES role(`id`) ON DELETE CASCADE
+    FOREIGN KEY(`role_id`) REFERENCES `role`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `participant` (
@@ -142,3 +138,5 @@ CREATE TABLE IF NOT EXISTS `rating` (
     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
+
+INSERT INTO `role` (`name`) VALUES ('admin'), ('jury');

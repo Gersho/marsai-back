@@ -5,6 +5,9 @@ declare global {
       MYSQL_USER: string;
       MYSQL_PASSWORD: string;
       MYSQL_PORT: number;
+      JWT_SECRET: string;
+      ADMIN_EMAIL: string;
+      ADMIN_PASSWORD: string;
     }
   }
 }

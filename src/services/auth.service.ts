@@ -4,7 +4,9 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import type { AuthRequest } from '../types/schemas/AuthRequest.schema.js';
 
-const login = async (authRequest: AuthRequest) => {
+const login = async (
+  authRequest: AuthRequest,
+): Promise<AuthResponse | null> => {
   const user = await userModel.findByEmail(authRequest.email);
   if (!user) {
     return null;

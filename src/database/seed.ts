@@ -46,4 +46,4 @@ const seed = async () => {
   }
 };
 
-seed();
+await seed();

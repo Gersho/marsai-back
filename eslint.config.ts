@@ -47,6 +47,11 @@ export default defineConfig(
         'warn',
         { selector: 'default', format: ['camelCase', 'PascalCase'] },
         { selector: 'variable', format: ['camelCase', 'UPPER_CASE'] },
+        {
+          selector: 'parameter',
+          format: ['camelCase'],
+          leadingUnderscore: 'allow',
+        },
         { selector: 'typeLike', format: ['PascalCase'] },
       ],
 

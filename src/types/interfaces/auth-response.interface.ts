@@ -1,4 +1,4 @@
-import type { UserResponse } from './User.interface.js';
+import type { UserResponse } from './user.interface.js';
 
 export default interface AuthResponse {
   user: UserResponse;

@@ -1,5 +1,5 @@
 import type { ResultSetHeader } from 'mysql2/promise';
-import type User from '../types/interfaces/User.interface.js';
+import type User from '../types/interfaces/user.interface.js';
 import db from './connection.js';
 import bcrypt from 'bcrypt';
 

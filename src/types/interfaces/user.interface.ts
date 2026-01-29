@@ -5,13 +5,13 @@ export default interface User extends RowDataPacket {
   id: number;
   email: string;
   password: string;
-  role: Role;
+  roles: Role[];
   created_at: Date;
 }
 
 export interface UserResponse {
   id: number;
   email: string;
-  role: string;
+  roles: Role[];
   created_at: Date;
 }

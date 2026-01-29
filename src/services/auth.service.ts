@@ -1,8 +1,8 @@
-import type AuthResponse from '../types/interfaces/AuthResponse.interface.js';
+import type AuthResponse from '../types/interfaces/auth-response.interface.js';
 import userModel from '../models/user.model.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import type { AuthRequest } from '../types/schemas/AuthRequest.schema.js';
+import type { AuthRequest } from '../types/schemas/auth-request.schema.js';
 
 const login = async (
   authRequest: AuthRequest,
@@ -18,10 +18,11 @@ const login = async (
 
   //TODO change expiresIn
   const accessToken = jwt.sign(
-    { id: user.id, role: user.role },
+    { id: user.id, roles: user.roles },
     process.env.JWT_SECRET,
     { expiresIn: '4h' },
   );
+
   const response: AuthResponse = {
     user: userWithoutPassword,
     accessToken,

@@ -1,9 +1,8 @@
 import eventModel from '../models/event.model.js';
 import type { CreateEventRequest } from '../types/schemas/create-event-request.schema.js';
 
-const create = async (body: CreateEventRequest) => {
+const create = async (body: CreateEventRequest): Promise<void> => {
   await eventModel.create(body);
-  //   console.log(body.date.getFullYear());
 };
 
 const eventService = { create };

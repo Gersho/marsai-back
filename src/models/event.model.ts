@@ -1,7 +1,7 @@
 import db from '../database/connection.js';
 import type { CreateEventRequest } from '../types/schemas/create-event-request.schema.js';
 
-const create = async (event: CreateEventRequest) => {
+const create = async (event: CreateEventRequest): Promise<void> => {
   await db.execute(
     `INSERT INTO event (title, description, status, date, published_at, duration, location) 
     VALUES (?, ?, ?, ?, ?, ?, ?)`,

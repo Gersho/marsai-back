@@ -2,6 +2,7 @@ import express from 'express';
 import authRouter from './routes/auth.routes.js';
 import { errorHandler } from './middlewares/error-handler.js';
 import cors from 'cors';
+import eventRouter from './routes/event.route.js';
 
 const app = express();
 const IP = process.env.IP;
@@ -16,6 +17,7 @@ app.use(
 );
 
 app.use('/auth', authRouter);
+app.use('/event', eventRouter);
 
 app.use(errorHandler);
 

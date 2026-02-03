@@ -1,12 +1,19 @@
 import express from 'express';
 import authRouter from './routes/auth.routes.js';
 import { errorHandler } from './middlewares/error-handler.js';
+import cors from 'cors';
 
 const app = express();
 const IP = process.env.IP;
 const PORT = process.env.PORT;
 
 app.use(express.json());
+
+app.use(
+  cors({
+    origin: process.env.FRONT_IP,
+  }),
+);
 
 app.use('/auth', authRouter);
 

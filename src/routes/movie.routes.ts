@@ -1,5 +1,5 @@
-import express from "express";
-import movieController from "../controllers/movie.controller.js";
+import express from 'express';
+import movieController from '../controllers/movie.controller.js';
 
 const movieRouter = express.Router();
 

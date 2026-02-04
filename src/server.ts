@@ -15,7 +15,6 @@ app.use('/auth', authRouter);
 
 app.use('/movies', movieRouter);
 
-
 app.listen(PORT, () => {
   console.info(`Server is running on http://localhost:${PORT}`);
 });

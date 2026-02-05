@@ -1,5 +1,6 @@
 import express from 'express';
 import authRouter from './routes/auth.routes.js';
+import movieRouter from './routes/movie.routes.js';
 import { errorHandler } from './middlewares/error-handler.js';
 import cors from 'cors';
 import eventRouter from './routes/event.route.js';
@@ -17,6 +18,8 @@ app.use(
 );
 
 app.use('/auth', authRouter);
+
+app.use('/movies', movieRouter);
 app.use('/event', eventRouter);
 
 app.use(errorHandler);

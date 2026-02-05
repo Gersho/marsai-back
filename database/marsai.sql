@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `collaborator` (
     `birthdate` DATE,
     `facebook_url` VARCHAR(255),
     `instagram_url` VARCHAR(255),
-    `youtune_url` VARCHAR(255),
+    `youtube_url` VARCHAR(255),
     `linkedin_url` VARCHAR(255),
     `twitter_url` VARCHAR(255),
     `movie_id` INT NOT NULL,
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `event` (
     `status` ENUM('ongoing', 'upcoming', 'canceled'),
     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    `published_at` DATETIME NOT NULL,
+    `published_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     `date` DATETIME NOT NULL,
     `duration` INT,
     `location` VARCHAR(255)

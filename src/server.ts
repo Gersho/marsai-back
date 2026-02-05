@@ -1,20 +1,29 @@
 import express from 'express';
 import authRouter from './routes/auth.routes.js';
 import movieRouter from './routes/movie.routes.js';
+import { errorHandler } from './middlewares/error-handler.js';
+import cors from 'cors';
+import eventRouter from './routes/event.route.js';
 
 const app = express();
-const PORT = process.env.PORT || 5001;
-
-app.get('/', (_req, res) => {
-  res.send('Welcome to the Express + TypeScript Server!');
-});
+const IP = process.env.IP;
+const PORT = process.env.PORT;
 
 app.use(express.json());
+
+app.use(
+  cors({
+    origin: process.env.FRONT_IP,
+  }),
+);
 
 app.use('/auth', authRouter);
 
 app.use('/movies', movieRouter);
+app.use('/event', eventRouter);
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.info(`Server is running on http://localhost:${PORT}`);
+  console.info(`Server is running on ${IP}:${PORT}`);
 });

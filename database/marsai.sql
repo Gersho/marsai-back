@@ -20,10 +20,9 @@ CREATE TABLE IF NOT EXISTS `movie` (
     `original_synopsis` TEXT NOT NULL,
     `english_synopsis` TEXT NOT NULL,
     `creative_process` TEXT NOT NULL,
-    `ia_tools` TEXT NOT NULL,
+    `ai_tools` TEXT NOT NULL,
     `has_subs` BOOLEAN NOT NULL,
-    `srt` VARCHAR(255),
-    `status` ENUM('draft','published','archived') NOT NULL
+    `status` ENUM('draft','published','archived') NOT NULL DEFAULT 'draft'
 );
 
 CREATE TABLE IF NOT EXISTS `collaborator` (

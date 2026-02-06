@@ -2,9 +2,15 @@ import express from 'express';
 import movieController from '../controllers/movie.controller.js';
 import { validate } from '../middlewares/validate.js';
 import { MovieRequestSchema } from '../types/schemas/MovieRequest.schema.js';
+import { upload } from '../middlewares/upload.js';
 
 const movieRouter = express.Router();
 
-movieRouter.post('/',validate(MovieRequestSchema), movieController.createMovie);
+movieRouter.post(
+  '/',
+  upload,
+  validate(MovieRequestSchema),
+  movieController.create,
+);
 
 export default movieRouter;

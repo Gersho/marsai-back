@@ -1,6 +1,6 @@
 import z from 'zod';
 
-export const CreateEventRequest = z.object({
+export const CreateEventRequestSchema = z.object({
   title: z.string().nonempty(),
   description: z.string().optional().default(''),
   date: z.coerce.date(),
@@ -9,4 +9,4 @@ export const CreateEventRequest = z.object({
   location: z.string().max(255),
 });
 
-export type CreateEventRequest = z.infer<typeof CreateEventRequest>;
+export type CreateEventRequest = z.infer<typeof CreateEventRequestSchema>;

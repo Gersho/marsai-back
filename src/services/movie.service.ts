@@ -2,7 +2,7 @@ import type MovieResponse from '../types/interfaces/MovieResponse.interface.js';
 import movieModel from '../models/movie.model.js';
 import type { MovieRequest } from '../types/schemas/MovieRequest.schema.js';
 
-const createMovie = async (
+const create = async (
   movieRequest: MovieRequest,
 ): Promise<MovieResponse | null> => {
   const newMovie = await movieModel.createMovie(movieRequest);
@@ -16,7 +16,7 @@ const createMovie = async (
 };
 
 const movieService = {
-  createMovie,
+  create,
 };
 
 export default movieService;

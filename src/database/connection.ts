@@ -6,6 +6,7 @@ const db = await mysql.createConnection({
   database: process.env.MYSQL_DATABASE,
   user: process.env.MYSQL_USER,
   password: process.env.MYSQL_PASSWORD,
+  namedPlaceholders: true,
 });
 
 export default db;

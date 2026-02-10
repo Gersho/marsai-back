@@ -1,6 +1,10 @@
 import type { Request, RequestHandler } from 'express';
 import multer, { type FileFilterCallback } from 'multer';
-import { ALLOWED_IMAGE_TYPES, MAX_SIZE } from '../helpers/upload-const.js';
+import {
+  ALLOWED_IMAGE_TYPES,
+  ALLOWED_VIDEO_TYPES,
+  MAX_SIZE,
+} from '../helpers/upload-const.js';
 
 const storage = multer.diskStorage({
   destination: function (_req, _file, cb) {
@@ -34,6 +38,16 @@ const fileFilter = (
         ),
       );
     }
+  } else if ('video'.includes(file.fieldname)) {
+    if (ALLOWED_VIDEO_TYPES.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(
+        new Error(
+          `Invalid video format for ${file.fieldname}. Allowed: .mp4, .mkv`,
+        ),
+      );
+    }
   } else {
     cb(new Error(`Unexpected field: ${file.fieldname}`));
   }
@@ -47,6 +61,7 @@ const uploadConfig = multer({
 
 export const upload: RequestHandler = (req, res, next) => {
   const uploadMiddleware = uploadConfig.fields([
+    { name: 'video', maxCount: 1 },
     { name: 'coverImage', maxCount: 1 },
     { name: 'stillImageA', maxCount: 1 },
     { name: 'stillImageB', maxCount: 1 },

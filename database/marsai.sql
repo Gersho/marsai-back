@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS `movie` (
     `original_title` VARCHAR(255) NOT NULL,
     `english_title` VARCHAR(255) NOT NULL,
     `submitted_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `youtube_url` VARCHAR(255) NOT NULL UNIQUE,
+    `youtube_url` VARCHAR(255) UNIQUE,
+    `path` VARCHAR(255),
     `cover_image` VARCHAR(255) NOT NULL,
     `duration` INT NOT NULL,
     `isHybrid` BOOLEAN NOT NULL,
@@ -51,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `collaborator` (
 
 CREATE TABLE IF NOT EXISTS `event` (
     `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    `title` VARCHAR(100) not null,
+    `title` VARCHAR(100) NOT NULL,
     `description` TEXT,
     `status` ENUM('ongoing', 'upcoming', 'canceled'),
     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,

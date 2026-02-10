@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `collaborator` (
     `lastname` VARCHAR(100),
     `gender` ENUM('Mr', 'Mme', 'Iel'),
     `email` VARCHAR(100),
-    `job` VARCHAR(100) ,
+    `job` VARCHAR(100),
     `contribution` VARCHAR(100),
     `address` VARCHAR(255),
     `zipcode` VARCHAR(20),

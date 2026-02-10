@@ -6,7 +6,7 @@ import collaboratorModel from '../models/collaborator.model.js';
 
 const create = async (movieRequest: MovieRequest): Promise<MovieResponse> => {
   try {
-    db.beginTransaction();
+    await db.beginTransaction();
     const newMovieId = await movieModel.create(movieRequest);
     await collaboratorModel.createDirector(movieRequest.director, newMovieId);
     await collaboratorModel.create(movieRequest.collaborators, newMovieId);

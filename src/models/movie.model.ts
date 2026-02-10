@@ -3,38 +3,28 @@ import db from '../database/connection.js';
 import type { MovieRequest } from '../types/schemas/MovieRequest.schema.js';
 import type Movie from '../types/interfaces/Movie.interface.js';
 
-const createMovie = async (newMovie: MovieRequest): Promise<number | null> => {
-  const sql = `INSERT INTO movie (original_title, english_title, youtube_url, cover_image, duration, isHybrid, language, original_synopsis, english_synopsis, creative_process, ia_tools, has_subs, srt, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+const create = async (newMovie: MovieRequest): Promise<number> => {
+  const sql = `
+    INSERT INTO movie 
+    (original_title, english_title, cover_image, duration, isHybrid, language, original_synopsis, english_synopsis, creative_process, ai_tools, has_subs) 
+    VALUES 
+    (:originalTitle, :englishTitle, :coverImage, :duration, :isHybrid, :language, :originalSynopsis, :englishSynopsis, :creativeProcess, :aiTools, :hasSubs)
+  `;
 
-  const [result] = await db.execute<ResultSetHeader>(sql, [
-    newMovie.originalTitle,
-    newMovie.englishTitle,
-    newMovie.youtubeUrl,
-    newMovie.coverImage,
-    newMovie.duration,
-    newMovie.isHybrid,
-    newMovie.language,
-    newMovie.originalSynopsis,
-    newMovie.englishSynopsis,
-    newMovie.creativeProcess,
-    newMovie.iaTools,
-    newMovie.hasSubs,
-    newMovie.srt,
-    newMovie.status,
-  ]);
+  const [result] = await db.execute<ResultSetHeader>(sql, newMovie);
 
   return result.insertId;
 };
 
-const getAllMovies = async (): Promise<Movie[]> => {
+const getAll = async (): Promise<Movie[]> => {
   const sql = 'SELECT * FROM movie';
   const [result] = await db.query(sql);
   return result as Movie[];
 };
 
 const movieModel = {
-  createMovie,
-  getAllMovies,
+  create,
+  getAll,
 };
 
 export default movieModel;

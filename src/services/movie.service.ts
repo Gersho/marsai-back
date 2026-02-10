@@ -2,28 +2,33 @@ import type MovieResponse from '../types/interfaces/MovieResponse.interface.js';
 import movieModel from '../models/movie.model.js';
 import type { MovieRequest } from '../types/schemas/MovieRequest.schema.js';
 import type Movie from '../types/interfaces/Movie.interface.js';
+import db from '../database/connection.js';
+import collaboratorModel from '../models/collaborator.model.js';
 
-const createMovie = async (
-  movieRequest: MovieRequest,
-): Promise<MovieResponse | null> => {
-  const newMovie = await movieModel.createMovie(movieRequest);
-  if (!newMovie) {
-    return null;
+const create = async (movieRequest: MovieRequest): Promise<MovieResponse> => {
+  try {
+    await db.beginTransaction();
+    const newMovieId = await movieModel.create(movieRequest);
+    await collaboratorModel.createDirector(movieRequest.director, newMovieId);
+    await collaboratorModel.create(movieRequest.collaborators, newMovieId);
+    await db.commit();
+    const response: MovieResponse = {
+      movieId: newMovieId,
+    };
+    return response;
+  } catch (err) {
+    console.error(err);
+    await db.rollback();
+    throw err;
   }
-  const response: MovieResponse = {
-    movieId: newMovie,
-  };
-  return response;
 };
 
-const getAllMovies = async (): Promise<Movie[] | null> => {
-  const response = await movieModel.getAllMovies();
-  if (!response) return null;
-  return response;
+const getAll = async (): Promise<Movie[]> => {
+  return await movieModel.getAll();
 };
 const movieService = {
-  createMovie,
-  getAllMovies,
+  create,
+  getAll,
 };
 
 export default movieService;

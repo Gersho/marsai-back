@@ -1,19 +1,26 @@
-import type { Request, Response } from 'express';
+import type { RequestHandler } from 'express';
 import movieService from '../services/movie.service.js';
+import { removeUploads } from '../helpers/remove-uploads.js';
 
-const createMovie = async (req: Request, res: Response): Promise<Response> => {
-  const response = await movieService.createMovie(req.body);
-  if (!response) return res.status(400).send({ message: 'Bad Request' });
-
-  return res.send(response);
+const create: RequestHandler = async (req, res, next) => {
+  try {
+    const response = await movieService.create(req.body);
+    return res.send(response);
+  } catch (e) {
+    removeUploads(req);
+    next(e);
+  }
 };
 
-const getAllMovies = async (res: Response): Promise<Response> => {
-  const response = await movieService.getAllMovies();
-  if (!response) return res.status(400).send({ message: 'Bad Request' });
+const getAll: RequestHandler = async (_req, res, next)  => {
+  try {
+    const response = await movieService.getAll();
+    return res.send(response);
+  } catch(e) {
+    next(e);
+  }
 
-  return res.send(response);
 };
-const movieController = { getAllMovies, createMovie };
+const movieController = { getAll, create };
 
 export default movieController;

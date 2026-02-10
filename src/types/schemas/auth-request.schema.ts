@@ -1,8 +1,8 @@
 import z from 'zod';
 
-export const AuthRequest = z.object({
+export const AuthRequestSchema = z.object({
   email: z.email(),
   password: z.string().nonempty(),
 });
 
-export type AuthRequest = z.infer<typeof AuthRequest>;
+export type AuthRequest = z.infer<typeof AuthRequestSchema>;

@@ -1,4 +1,4 @@
-$import type { RowDataPacket } from 'mysql2/promise';
+import type { RowDataPacket } from 'mysql2/promise';
 import type { Role } from '../enums/role.enum.js';
 
 export default interface User extends RowDataPacket {

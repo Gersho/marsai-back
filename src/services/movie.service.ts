@@ -11,18 +11,19 @@ const createMovie = async (
     return null;
   }
   const response: MovieResponse = {
-    movieId: newMovie, 
+    movieId: newMovie,
   };
   return response;
 };
 
-const getAllMovies = async (): Promise<Movie[] | null>  => {
+const getAllMovies = async (): Promise<Movie[] | null> => {
   const response = await movieModel.getAllMovies();
   if (!response) return null;
   return response;
-}
+};
 const movieService = {
-  createMovie, getAllMovies
+  createMovie,
+  getAllMovies,
 };
 
 export default movieService;

@@ -8,12 +8,12 @@ const createMovie = async (req: Request, res: Response): Promise<Response> => {
   return res.send(response);
 };
 
-const getAllMovies = async (req: Request, res: Response): Promise<Response> => {
+const getAllMovies = async ( res: Response): Promise<Response> => {
   const response = await movieService.getAllMovies();
   if (!response) return res.status(400).send({ message: 'Bad Request' });
 
   return res.send(response);
-}
+};
 const movieController = { getAllMovies, createMovie };
 
 export default movieController;

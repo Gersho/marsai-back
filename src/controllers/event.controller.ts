@@ -10,6 +10,15 @@ const create: RequestHandler = async (req, res, next) => {
   }
 };
 
-const eventController = { create };
+const findAll: RequestHandler = async (_, res, next) => {
+  try {
+    const events = await eventService.findAll();
+    return res.json(events);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const eventController = { create, findAll };
 
 export default eventController;

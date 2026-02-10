@@ -15,4 +15,6 @@ eventRouter.post(
   eventController.create,
 );
 
+eventRouter.get('/', eventController.findAll);
+
 export default eventRouter;

@@ -1,6 +1,7 @@
 import type { ResultSetHeader } from 'mysql2';
 import db from '../database/connection.js';
 import type { MovieRequest } from '../types/schemas/MovieRequest.schema.js';
+import type Movie from '../types/interfaces/Movie.interface.js';
 
 const create = async (newMovie: MovieRequest): Promise<number> => {
   const sql = `
@@ -15,8 +16,15 @@ const create = async (newMovie: MovieRequest): Promise<number> => {
   return result.insertId;
 };
 
+const getAll = async (): Promise<Movie[]> => {
+  const sql = 'SELECT * FROM movie';
+  const [result] = await db.query(sql);
+  return result as Movie[];
+};
+
 const movieModel = {
   create,
+  getAll,
 };
 
 export default movieModel;

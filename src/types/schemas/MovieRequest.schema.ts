@@ -6,10 +6,10 @@ import {
   MAX_VIDEO_SIZE,
 } from '../../helpers/upload-const.js';
 
-const parseJson = (value: any, ctx: z.RefinementCtx) => {
+const parseJson = (value: unknown, ctx: z.RefinementCtx) => {
   if (typeof value === 'string') {
     try {
-      return JSON.parse(value);
+      return JSON.parse(value) as object;
     } catch (e) {
       ctx.addIssue({
         code: 'custom',

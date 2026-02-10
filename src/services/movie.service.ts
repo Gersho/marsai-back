@@ -1,6 +1,7 @@
 import type MovieResponse from '../types/interfaces/MovieResponse.interface.js';
 import movieModel from '../models/movie.model.js';
 import type { MovieRequest } from '../types/schemas/MovieRequest.schema.js';
+import type Movie from '../types/interfaces/Movie.interface.js';
 import db from '../database/connection.js';
 import collaboratorModel from '../models/collaborator.model.js';
 
@@ -22,8 +23,12 @@ const create = async (movieRequest: MovieRequest): Promise<MovieResponse> => {
   }
 };
 
+const getAll = async (): Promise<Movie[]> => {
+  return await movieModel.getAll();
+};
 const movieService = {
   create,
+  getAll,
 };
 
 export default movieService;

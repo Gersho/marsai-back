@@ -10,6 +10,13 @@ const findAll = async (): Promise<Event[]> => {
   return await eventModel.findAll();
 };
 
-const eventService = { create, findAll };
+const remove = async (id: number): Promise<void> => {
+  const affectedRows = await eventModel.remove(id);
+  if (affectedRows === 0) {
+    throw new Error(`Event with id ${id} not found`);
+  }
+};
+
+const eventService = { create, findAll, remove };
 
 export default eventService;

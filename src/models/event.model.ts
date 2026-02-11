@@ -1,6 +1,7 @@
 import db from '../database/connection.js';
 import type { CreateEventRequest } from '../types/schemas/create-event-request.schema.js';
 import type { Event } from '../types/interfaces/event.interface.js';
+import type { ResultSetHeader } from 'mysql2';
 
 const create = async (event: CreateEventRequest): Promise<void> => {
   await db.execute(
@@ -24,6 +25,11 @@ const findAll = async (): Promise<Event[]> => {
   return rows as Event[];
 };
 
-const eventModel = { create, findAll };
+const remove = async (id: number): Promise<number> => {
+  const [result] = await db.execute('DELETE FROM event WHERE id = ?', [id]);
+  return (result as ResultSetHeader).affectedRows;
+};
+
+const eventModel = { create, findAll, remove };
 
 export default eventModel;

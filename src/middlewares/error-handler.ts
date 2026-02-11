@@ -12,7 +12,7 @@ export const errorHandler: ErrorRequestHandler = (
     message:
       process.env.NODE_ENV === 'development'
         ? err.message
-        : 'Internal serve:r error',
+        : 'Internal server error',
     stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
   };
   return res.status(500).send(errResponse);

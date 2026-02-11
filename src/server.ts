@@ -6,6 +6,7 @@ import cors from 'cors';
 import eventRouter from './routes/event.route.js';
 import newsletterRouter from './routes/newsletter.routes.js';
 import emailService from './services/emailService.js';
+import subscriberRouter from './routes/subscriber.route.js';
 
 const app = express();
 const IP = process.env.IP;
@@ -23,6 +24,7 @@ app.use('/auth', authRouter);
 app.use('/movies', movieRouter);
 app.use('/event', eventRouter);
 app.use('/newsletter', newsletterRouter);
+app.use('/subscriber', subscriberRouter);
 
 app.use(errorHandler);
 

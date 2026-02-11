@@ -4,14 +4,13 @@ import { removeUploads } from '../helpers/remove-uploads.js';
 
 export const validate =
   (schema: ZodObject): RequestHandler =>
-  (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const dataToValidate: Record<string, unknown> = {
         ...(req.body as Record<string, unknown>),
         ...((req.files as Record<string, unknown>) || {}),
       };
-      // TODO maybe parse async later
-      req.body = schema.parse(dataToValidate);
+      req.body = await schema.parseAsync(dataToValidate);
       next();
     } catch (error) {
       if (error instanceof ZodError) {

@@ -17,4 +17,6 @@ eventRouter.post(
 
 eventRouter.get('/', eventController.findAll);
 
+eventRouter.delete('/:id', isLogged, isAdmin, eventController.remove);
+
 export default eventRouter;

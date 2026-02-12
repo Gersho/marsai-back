@@ -3,6 +3,7 @@ import type { CreateEventRequest } from '../types/schemas/create-event-request.s
 import type { UpdateEventRequest } from '../types/schemas/update-event-request.schema.js';
 import type { Event } from '../types/interfaces/event.interface.js';
 import type { ResultSetHeader } from 'mysql2';
+import { toSnakeCase } from '../helpers/string-utils.js';
 
 const create = async (event: CreateEventRequest): Promise<void> => {
   await db.execute(
@@ -34,7 +35,7 @@ const update = async (
   const values: (string | number | Date)[] = [];
 
   for (const [key, value] of Object.entries(event)) {
-    fields.push(`${key} = ?`);
+    fields.push(`${toSnakeCase(key)} = ?`);
     values.push(value as string | number | Date);
   }
 

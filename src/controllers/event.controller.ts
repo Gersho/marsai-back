@@ -29,6 +29,16 @@ const remove: RequestHandler = async (req, res, next) => {
   }
 };
 
-const eventController = { create, findAll, remove };
+const update: RequestHandler = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await eventService.update(parseInt(id as string), req.body);
+    return res.status(200).send();
+  } catch (err) {
+    next(err);
+  }
+};
+
+const eventController = { create, findAll, remove, update };
 
 export default eventController;

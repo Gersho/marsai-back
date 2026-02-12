@@ -22,7 +22,7 @@ const remove = async (id: number): Promise<void> => {
 const update = async (id: number, event: UpdateEventRequest): Promise<void> => {
   const affectedRows = await eventModel.update(id, event);
   if (affectedRows === 0) {
-    throw new Error(`Event with id ${id} not found`);
+    throw new AppError(404, `Event not found`);
   }
 };
 

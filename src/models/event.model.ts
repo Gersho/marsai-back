@@ -44,17 +44,20 @@ const update = async (
 
   values.push(id); // Add id for the WHERE clause
 
-  const [result] = await db.execute(
+  const [result] = await db.execute<ResultSetHeader>(
     `UPDATE event SET ${fields.join(', ')} WHERE id = ?`,
     values,
   );
 
-  return (result as ResultSetHeader).affectedRows;
+  return result.affectedRows;
 };
 
 const remove = async (id: number): Promise<number> => {
-  const [result] = await db.execute('DELETE FROM event WHERE id = ?', [id]);
-  return (result as ResultSetHeader).affectedRows;
+  const [result] = await db.execute<ResultSetHeader>(
+    'DELETE FROM event WHERE id = ?',
+    [id],
+  );
+  return result.affectedRows;
 };
 
 const eventModel = { create, findAll, update, remove };

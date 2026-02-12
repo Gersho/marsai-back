@@ -1,5 +1,5 @@
 import type { ErrorRequestHandler } from 'express';
-import type ErrorResponse from '../types/interfaces/error-response.interface.js';
+import AppError from '../helpers/AppError.js';
 
 export const errorHandler: ErrorRequestHandler = (
   err: Error,
@@ -8,12 +8,20 @@ export const errorHandler: ErrorRequestHandler = (
   _next,
 ) => {
   console.error(err);
-  const errResponse: ErrorResponse = {
-    message:
-      process.env.NODE_ENV === 'development'
-        ? err.message
-        : 'Internal server error',
+  let statusCode = 500;
+  let message = 'Internal server error';
+
+  if (err instanceof AppError) {
+    statusCode = err.statusCode; // distinct from err.code
+    message = err.message;
+  }
+
+  if (process.env.NODE_ENV === 'development' && statusCode === 500) {
+    message = err.message;
+  }
+
+  res.status(statusCode).json({
+    message,
     stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
-  };
-  return res.status(500).send(errResponse);
+  });
 };

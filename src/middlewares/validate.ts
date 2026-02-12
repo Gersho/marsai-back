@@ -10,7 +10,6 @@ export const validate =
         ...(req.body as Record<string, unknown>),
         ...((req.files as Record<string, unknown>) || {}),
       };
-      // TODO maybe parse async later
       req.body = schema.parse(dataToValidate);
       next();
     } catch (error) {

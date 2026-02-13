@@ -15,16 +15,22 @@ const create = async (newMovie: MovieRequest): Promise<number> => {
 
   return result.insertId;
 };
-
 const getAll = async (): Promise<Movie[]> => {
   const sql = 'SELECT * FROM movie';
   const [result] = await db.query(sql);
   return result as Movie[];
 };
 
+const getById = async (): Promise<Movie[]> => {
+  const sql = 'SELECT * FROM movie where id = ""';
+  const [result] = await db.query(sql, [getById], );
+  return result as Movie[];
+};
+
 const movieModel = {
   create,
   getAll,
+  getById,
 };
 
 export default movieModel;

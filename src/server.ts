@@ -13,7 +13,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: process.env.FRONT_IP,
+  origin: process.env.FRONT_IP,
   }),
 );
 

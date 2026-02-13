@@ -12,15 +12,25 @@ const create: RequestHandler = async (req, res, next) => {
   }
 };
 
-const getAll: RequestHandler = async (_req, res, next)  => {
+const getAll: RequestHandler = async (_req, res, next) => {
   try {
     const response = await movieService.getAll();
     return res.send(response);
-  } catch(e) {
+  } catch (e) {
+    next(e);
+  }
+}
+
+const getById: RequestHandler = async (_req, res, next) => {
+  try {
+    const response = await movieService.getById();
+    return res.send(response);
+  } catch (e) {
     next(e);
   }
 
 };
-const movieController = { getAll, create };
+
+const movieController = { getAll, getById, create };
 
 export default movieController;

@@ -26,9 +26,15 @@ const create = async (movieRequest: MovieRequest): Promise<MovieResponse> => {
 const getAll = async (): Promise<Movie[]> => {
   return await movieModel.getAll();
 };
+const getById = async (): Promise<Movie[]> => {
+  return await movieModel.getById();
+};
+
 const movieService = {
   create,
   getAll,
+  getById,
+
 };
 
 export default movieService;

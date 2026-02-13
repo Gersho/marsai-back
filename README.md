@@ -1,7 +1,5 @@
 # MARSAI - Official Project : The festival of 60-second short films created with AI
 
-![Marsai](./hero.png)
-
 - An Express.js MVC project using a service layer.
 
 ## 🌌 Get started
@@ -15,8 +13,6 @@ To infinity and beyond! 🚀 Before you take off, clone the repo and set it up:
 ```sh
 git clone https://github.com/hichem-tlidjane/marsai-back.git
 cd marsai-back
-npm install
-yarn run dev
 ```
 
 This will clone the repo, install dependencies in the project

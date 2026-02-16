@@ -4,6 +4,9 @@ import movieRouter from './routes/movie.routes.js';
 import { errorHandler } from './middlewares/error-handler.js';
 import cors from 'cors';
 import eventRouter from './routes/event.route.js';
+import newsletterRouter from './routes/newsletter.routes.js';
+import emailService from './services/emailService.js';
+import subscriberRouter from './routes/subscriber.route.js';
 
 const app = express();
 const IP = process.env.IP;
@@ -18,11 +21,14 @@ app.use(
 );
 
 app.use('/auth', authRouter);
-
 app.use('/movies', movieRouter);
-app.use('/event', eventRouter);
+app.use('/events', eventRouter);
+app.use('/newsletters', newsletterRouter);
+app.use('/subscribers', subscriberRouter);
 
 app.use(errorHandler);
+
+emailService.mailerJob();
 
 app.listen(PORT, () => {
   console.info(`Server is running on ${IP}:${PORT}`);

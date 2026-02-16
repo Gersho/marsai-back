@@ -13,10 +13,10 @@ CREATE TABLE IF NOT EXISTS `movie` (
     `english_title` VARCHAR(255) NOT NULL,
     `submitted_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `youtube_url` VARCHAR(255) UNIQUE,
-    `path` VARCHAR(255),
-    `cover_image` VARCHAR(255) NOT NULL,
+    `video_path` VARCHAR(255),
+    `cover_path` VARCHAR(255) NOT NULL,
     `duration` INT NOT NULL,
-    `isHybrid` BOOLEAN NOT NULL,
+    `is_hybrid` BOOLEAN NOT NULL,
     `language` ENUM('FR','EN') NOT NULL,
     `original_synopsis` TEXT NOT NULL,
     `english_synopsis` TEXT NOT NULL,
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS `movie_tag`(
 
 CREATE TABLE IF NOT EXISTS `image` (
     `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    `url` VARCHAR(255) NOT NULL,
+    `path` VARCHAR(255) NOT NULL,
     `movie_id` INT NOT NULL,
     FOREIGN KEY (`movie_id`) REFERENCES `movie`(`id`) ON DELETE CASCADE
 );
@@ -118,12 +118,13 @@ CREATE TABLE IF NOT EXISTS `newsletter` (
     `object` VARCHAR(100),
     `content` TEXT,
     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    `send_at` DATETIME
+    `send_at` DATETIME,
+    `sent` BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS `subscriber` (
     `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    `email` VARCHAR(100),
+    `email` VARCHAR(100) UNIQUE,
     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 

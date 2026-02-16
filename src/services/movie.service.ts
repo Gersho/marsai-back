@@ -34,7 +34,6 @@ const movieService = {
   create,
   getAll,
   getById,
-
 };
 
 export default movieService;

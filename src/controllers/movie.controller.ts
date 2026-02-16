@@ -19,7 +19,7 @@ const getAll: RequestHandler = async (_req, res, next) => {
   } catch (e) {
     next(e);
   }
-}
+};
 
 const getById: RequestHandler = async (_req, res, next) => {
   try {
@@ -28,7 +28,6 @@ const getById: RequestHandler = async (_req, res, next) => {
   } catch (e) {
     next(e);
   }
-
 };
 
 const movieController = { getAll, getById, create };

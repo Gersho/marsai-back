@@ -21,10 +21,10 @@ const getAll = async (): Promise<Movie[]> => {
   return result as Movie[];
 };
 
-const getById = async (): Promise<Movie[]> => {
+const getById = async (id: number): Promise<Movie | null> => {
   const sql = 'SELECT * FROM movie where id = ""';
-  const [result] = await db.query(sql, [getById]);
-  return result as Movie[];
+  const [result] = await db.query<Movie[]>(sql, [id]);
+  return result[0] ?? null;
 };
 
 const movieModel = {

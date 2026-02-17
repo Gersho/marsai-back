@@ -23,7 +23,8 @@ const getAll: RequestHandler = async (_req, res, next) => {
 
 const getById: RequestHandler = async (_req, res, next) => {
   try {
-    const response = await movieService.getById();
+    const { id } = _req.params;
+    const response = await movieService.getById(parseInt(id as string));
     return res.send(response);
   } catch (e) {
     next(e);

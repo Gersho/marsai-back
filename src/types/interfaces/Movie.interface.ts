@@ -2,19 +2,19 @@ import type { Languages } from "../enums/languages.enum.js";
 
 export default interface Movie {
   id?: number;
-  originalTitle: string;
-  englishTitle: string;
-  submittedAt?: Date;
-  youtubeUrl: string;
-  coverImage: string;
+  original_title: string;
+  english_title: string;
+  submitted_at?: Date;
+  youtube_url: string;
+  cover_image: string;
   duration: number;
-  isHybrid: boolean;
+  is_hybrid: boolean;
   language: Languages;
-  originalSynopsis: string;
-  englishSynopsis: string;
-  creativeProcess: string;
-  iaTools: string;
-  hasSubs: boolean;
+  original_synopsis: string;
+  english_synopsis: string;
+  creative_process: string;
+  ia_tools: string;
+  has_subs: boolean;
   srt: string | null;
   status: 'draft' | 'published' | 'archived';
 }

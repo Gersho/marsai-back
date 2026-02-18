@@ -28,9 +28,34 @@ const create = async (movieRequest: MovieRequest): Promise<MovieResponse> => {
 const getAll = async (): Promise<Movie[]> => {
   return await movieModel.getAll();
 };
+
+const deleteMovie = async (id: number): Promise<void> => {
+  try {
+    await db.beginTransaction();
+    await collaboratorModel.deleteMovie(id);
+    await imageModel.deleteMovie(id);
+    
+    const affectedRows = await movieModel.deleteMovie(id); 
+    
+  if (affectedRows === 0) {
+      await db.rollback();
+      const err = new Error('Not Found.');
+      err.name = 'NotFoundError'; 
+      throw err;    
+    }
+
+    await db.commit();
+  } catch (err) {
+    console.error(err);
+    await db.rollback();
+    throw err;
+  }
+};
+
 const movieService = {
   create,
   getAll,
+  deleteMovie,
 };
 
 export default movieService;

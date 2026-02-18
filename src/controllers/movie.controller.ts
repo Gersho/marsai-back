@@ -20,6 +20,17 @@ const getAll: RequestHandler = async (_req, res, next) => {
     next(e);
   }
 };
-const movieController = { getAll, create };
+
+const getById: RequestHandler = async (_req, res, next) => {
+  try {
+    const { id } = _req.params;
+    const response = await movieService.getById(parseInt(id as string));
+    return res.send(response);
+  } catch (e) {
+    next(e);
+  }
+};
+
+const movieController = { getAll, getById, create };
 
 export default movieController;

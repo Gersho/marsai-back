@@ -1,9 +1,10 @@
+import type { RowDataPacket } from "mysql2";
 import type { Languages } from "../enums/languages.enum.js";
 
-export default interface Movie {
+export default interface Movie extends RowDataPacket {
   id?: number;
-  originalTitle: string;
-  englishTitle: string;
+  original_title: string;
+  english_title: string;
   submittedAt?: Date;
   youtubeUrl: string;
   coverImage: string;

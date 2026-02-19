@@ -14,6 +14,14 @@ const insertMultiple = async (
   );
 };
 
-const imageModel = { insertMultiple };
+const remove = async (movieId: number): Promise<number> => {
+  const sql = 'DELETE FROM image WHERE movie_id = :movieId';
+
+  const [result] = await db.execute<ResultSetHeader>(sql, { movieId });
+
+  return result.affectedRows;
+};
+
+const imageModel = { insertMultiple, remove };
 
 export default imageModel;

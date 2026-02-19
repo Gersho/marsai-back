@@ -35,10 +35,31 @@ const getById = async (id: number): Promise<Movie> => {
   return movie;
 };
 
+const remove = async (id: number): Promise<void> => {
+  try {
+    await db.beginTransaction();
+    await collaboratorModel.remove(id);
+    await imageModel.remove(id);
+
+    const affectedRows = await movieModel.remove(id);
+
+    if (affectedRows === 0) {
+      throw new AppError(404, 'film not found');
+    }
+
+    await db.commit();
+  } catch (err) {
+    console.error(err);
+    await db.rollback();
+    throw err;
+  }
+};
+
 const movieService = {
   create,
   getAll,
   getById,
+  remove,
 };
 
 export default movieService;

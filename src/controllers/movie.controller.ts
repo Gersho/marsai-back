@@ -21,6 +21,17 @@ const getAll: RequestHandler = async (_req, res, next) => {
   }
 };
 
+const remove: RequestHandler = async (req, res, next) => {
+  try {
+    const movieId = Number(req.params.id);
+    await movieService.remove(movieId);
+
+    return res.status(204).json({ message: 'film delete with success.' });
+  } catch (e) {
+    next(e);
+  }
+};
+
 const getById: RequestHandler = async (_req, res, next) => {
   try {
     const { id } = _req.params;
@@ -31,6 +42,6 @@ const getById: RequestHandler = async (_req, res, next) => {
   }
 };
 
-const movieController = { getAll, getById, create };
+const movieController = { getAll, getById, create, remove };
 
 export default movieController;

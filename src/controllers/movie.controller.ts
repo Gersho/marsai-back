@@ -28,9 +28,9 @@ const remove: RequestHandler = async (req, res, next) => {
 
     return res.status(204).json({ message: 'film delete with success.' });
   } catch (e) {
-        next(e);
-    }
-  };
+    next(e);
+  }
+};
 
 const getById: RequestHandler = async (_req, res, next) => {
   try {

@@ -44,8 +44,7 @@ const remove = async (id: number): Promise<void> => {
     const affectedRows = await movieModel.remove(id);
 
     if (affectedRows === 0) {
-      throw new AppError (404,"film not found")
-
+      throw new AppError(404, 'film not found');
     }
 
     await db.commit();

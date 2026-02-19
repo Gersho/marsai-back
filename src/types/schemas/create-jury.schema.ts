@@ -6,7 +6,7 @@ const JurySchema = z.object({
   lastname: z.string(),
 });
 
-export type Jury = z.infer<typeof JurySchema>;
+export type JuryRequest = z.infer<typeof JurySchema>;
 
 export const CreateJurySchema = z.object({
   juries: z.array(JurySchema).nonempty(),

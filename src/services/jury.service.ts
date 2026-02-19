@@ -2,11 +2,13 @@ import AppError from '../helpers/AppError.js';
 import { isMysqlError } from '../helpers/is-mysql-error.js';
 import { generateRandomString } from '../helpers/string-utils.js';
 import juryModel from '../models/jury.model.js';
-import type { Jury } from '../types/schemas/create-jury.schema.js';
+import type Jury from '../types/interfaces/jury.interface.js';
+import type { CreateJury } from '../types/schemas/create-jury.schema.js';
 import authService from './auth.service.js';
 
-const addJuries = async (juries: Jury[]): Promise<number> => {
+const addJuries = async (juryRequest: CreateJury): Promise<number> => {
   try {
+    const juries = juryRequest.juries;
     const juriesWithPass = await Promise.all(
       juries.map(async (jury) => {
         const password = generateRandomString(20);

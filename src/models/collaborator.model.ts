@@ -94,7 +94,7 @@ const create = async (
   return result.insertId;
 };
 
-const deleteMovie = async (movieId: number): Promise<number> => {
+const remove = async (movieId: number): Promise<number> => {
   const sql = 'DELETE FROM collaborator WHERE movie_id = :movieId';
 
   const [result] = await db.execute<ResultSetHeader>(sql, { movieId });
@@ -102,6 +102,6 @@ const deleteMovie = async (movieId: number): Promise<number> => {
   return result.affectedRows;
 };
 
-const collaboratorModel = { create, createDirector, deleteMovie };
+const collaboratorModel = { create, createDirector, remove };
 
 export default collaboratorModel;

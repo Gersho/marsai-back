@@ -21,33 +21,16 @@ const getAll: RequestHandler = async (_req, res, next) => {
   }
 };
 
-const deleteMovie: RequestHandler = async (req, res, next) => {
+const remove: RequestHandler = async (req, res, next) => {
   try {
     const movieId = Number(req.params.id);
-    // const affectedRows = await movieService.deleteMovie(id);
+    await movieService.remove(movieId);
 
-    //   if (affectedRows === 0) {
-    //         return res.status(404).json({
-    //             message: "film not found"
-    //         });
-    //     }
-    await movieService.deleteMovie(movieId);
-
-    return res.status(200).json({ message: 'film delete with success.' });
+    return res.status(204).json({ message: 'film delete with success.' });
   } catch (e) {
-    const error = (e as Error).name;
-    if (error === 'NotFoundError') {
-      return (
-        res.status(404).json({
-          message: 'film not found',
-        }),
-        removeUploads(req),
-        next(e)
-      );
+        next(e);
     }
-  }
-};
-
+  };
 
 const getById: RequestHandler = async (_req, res, next) => {
   try {
@@ -59,6 +42,6 @@ const getById: RequestHandler = async (_req, res, next) => {
   }
 };
 
-const movieController = { getAll, getById, create, deleteMovie };
+const movieController = { getAll, getById, create, remove };
 
 export default movieController;

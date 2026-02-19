@@ -27,7 +27,7 @@ const getById = async (id: number): Promise<Movie | null> => {
   return result[0] ?? null;
 };
 
-const deleteMovie = async (id: number): Promise<number> => {
+const remove = async (id: number): Promise<number> => {
   const sql = 'DELETE FROM movie WHERE id = :id';
 
   const [result] = await db.execute<ResultSetHeader>(sql, { id });
@@ -39,7 +39,7 @@ const movieModel = {
   create,
   getAll,
   getById,
-  deleteMovie,
+  remove,
 };
 
 export default movieModel;

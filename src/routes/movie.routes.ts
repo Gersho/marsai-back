@@ -14,6 +14,6 @@ movieRouter.post(
   validate(MovieRequestSchema),
   movieController.create,
 );
-movieRouter.delete('/:id', movieController.deleteMovie);
+movieRouter.delete('/:id', movieController.remove);
 
 export default movieRouter;

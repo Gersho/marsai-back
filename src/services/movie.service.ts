@@ -35,20 +35,17 @@ const getById = async (id: number): Promise<Movie> => {
   return movie;
 };
 
-
-const deleteMovie = async (id: number): Promise<void> => {
+const remove = async (id: number): Promise<void> => {
   try {
     await db.beginTransaction();
-    await collaboratorModel.deleteMovie(id);
-    await imageModel.deleteMovie(id);
+    await collaboratorModel.remove(id);
+    await imageModel.remove(id);
 
-    const affectedRows = await movieModel.deleteMovie(id);
+    const affectedRows = await movieModel.remove(id);
 
     if (affectedRows === 0) {
-      await db.rollback();
-      const err = new Error('Not Found.');
-      err.name = 'NotFoundError';
-      throw err;
+      throw new AppError (404,"film not found")
+
     }
 
     await db.commit();
@@ -63,7 +60,7 @@ const movieService = {
   create,
   getAll,
   getById,
-  deleteMovie
+  remove,
 };
 
 export default movieService;

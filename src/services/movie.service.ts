@@ -26,8 +26,8 @@ const create = async (movieRequest: MovieRequest): Promise<MovieResponse> => {
   }
 };
 
-const getAll = async (): Promise<Movie[]> => {
-  return await movieModel.getAll();
+const getAll = async (page: number): Promise<Movie[]> => {
+  return await movieModel.getAll(page);
 };
 const getById = async (id: number): Promise<Movie> => {
   const movie = await movieModel.getById(id);

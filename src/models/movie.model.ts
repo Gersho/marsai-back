@@ -15,9 +15,22 @@ const create = async (newMovie: MovieRequest): Promise<number> => {
 
   return result.insertId;
 };
-const getAll = async (): Promise<Movie[]> => {
-  const sql = 'SELECT * FROM movie';
-  const [result] = await db.query(sql);
+const getAll = async (page: number): Promise<Movie[]> => {
+  const offset: number = (page - 1) * 20;
+
+  const sql =
+    'SELECT m.*, \
+                    JSON_OBJECT( \
+                        "gender", c.gender,\
+                        "firstname", c.firstname,\
+                        "lastname", c.lastname\
+                      )  AS director\
+              FROM movie m \
+              INNER JOIN collaborator c ON m.id = c.movie_id \
+              WHERE c.contribution = "Director"\
+              LIMIT 20 OFFSET ?';
+
+  const [result] = await db.query<Movie[]>(sql, [offset]);
   return result as Movie[];
 };
 

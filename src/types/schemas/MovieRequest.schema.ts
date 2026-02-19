@@ -85,13 +85,17 @@ export const MovieRequestSchema = z
     stillImageB: z.array(ImageFileSchema).nullish(),
     stillImageC: z.array(ImageFileSchema).nullish(),
     // duration: z.coerce.number().int().positive().max(90),
-    isHybrid: z.coerce.boolean().default(false),
+    isHybrid: z
+      .enum(['true', 'false'])
+      .transform((v) => (v === 'true' ? true : false)),
     language: z.enum(Languages),
     originalSynopsis: z.string().min(1).max(300),
     englishSynopsis: z.string().min(1).max(300),
     creativeProcess: z.string().min(1).max(300),
     aiTools: z.string().min(1).max(300),
-    hasSubs: z.coerce.boolean(),
+    hasSubs: z
+      .enum(['true', 'false'])
+      .transform((v) => (v === 'true' ? true : false)),
     director: z.preprocess(parseJson, DirectorSchema),
     collaborators: z.preprocess(parseJson, z.array(CollaboratorsSchema)),
   })

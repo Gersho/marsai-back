@@ -1,6 +1,7 @@
 import type { RequestHandler } from 'express';
 import movieService from '../services/movie.service.js';
 import { removeUploads } from '../helpers/remove-uploads.js';
+import AppError from '../helpers/AppError.js';
 
 const create: RequestHandler = async (req, res, next) => {
   try {
@@ -12,9 +13,14 @@ const create: RequestHandler = async (req, res, next) => {
   }
 };
 
-const getAll: RequestHandler = async (_req, res, next) => {
+const getAll: RequestHandler = async (req, res, next) => {
   try {
-    const response = await movieService.getAll();
+    const { page } = req.query;
+    const pageAsInt = parseInt(page as string);
+    if (isNaN(pageAsInt) || pageAsInt <= 0) {
+      throw new AppError(400, 'Wrong query params');
+    }
+    const response = await movieService.getAll(pageAsInt);
     return res.send(response);
   } catch (e) {
     next(e);

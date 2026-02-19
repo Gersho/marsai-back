@@ -9,6 +9,7 @@ import emailService from './services/emailService.js';
 import subscriberRouter from './routes/subscriber.route.js';
 import cookieParser from 'cookie-parser';
 import bookingRouter from './routes/booking.routes.js';
+import juryRouter from './routes/jury.routes.js';
 
 const app = express();
 const IP = process.env.IP;
@@ -30,6 +31,7 @@ app.use('/events', eventRouter);
 app.use('/newsletters', newsletterRouter);
 app.use('/subscribers', subscriberRouter);
 app.use('/bookings', bookingRouter);
+app.use('/juries', juryRouter);
 
 app.use(errorHandler);
 

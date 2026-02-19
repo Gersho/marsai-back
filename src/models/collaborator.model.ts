@@ -95,11 +95,10 @@ const create = async (
 };
 
 const deleteMovie = async (movieId: number): Promise<number> => {
-  
   const sql = 'DELETE FROM collaborator WHERE movie_id = :movieId';
-  
+
   const [result] = await db.execute<ResultSetHeader>(sql, { movieId });
-  
+
   return result.affectedRows;
 };
 

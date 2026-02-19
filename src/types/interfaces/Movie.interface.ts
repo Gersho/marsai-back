@@ -1,4 +1,4 @@
-import type { Languages } from "../enums/languages.enum.js";
+import type { Languages } from '../enums/languages.enum.js';
 
 export default interface Movie {
   id?: number;

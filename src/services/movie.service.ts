@@ -34,14 +34,14 @@ const deleteMovie = async (id: number): Promise<void> => {
     await db.beginTransaction();
     await collaboratorModel.deleteMovie(id);
     await imageModel.deleteMovie(id);
-    
-    const affectedRows = await movieModel.deleteMovie(id); 
-    
-  if (affectedRows === 0) {
+
+    const affectedRows = await movieModel.deleteMovie(id);
+
+    if (affectedRows === 0) {
       await db.rollback();
       const err = new Error('Not Found.');
-      err.name = 'NotFoundError'; 
-      throw err;    
+      err.name = 'NotFoundError';
+      throw err;
     }
 
     await db.commit();

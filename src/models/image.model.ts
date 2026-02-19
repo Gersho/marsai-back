@@ -15,11 +15,10 @@ const insertMultiple = async (
 };
 
 const deleteMovie = async (movieId: number): Promise<number> => {
-  
-  const sql = 'DELETE FROM image WHERE movie_id = :movieId'; 
-  
+  const sql = 'DELETE FROM image WHERE movie_id = :movieId';
+
   const [result] = await db.execute<ResultSetHeader>(sql, { movieId });
-  
+
   return result.affectedRows;
 };
 

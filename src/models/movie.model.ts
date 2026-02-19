@@ -24,12 +24,11 @@ const getAll = async (): Promise<Movie[]> => {
 
 const deleteMovie = async (id: number): Promise<number> => {
   const sql = 'DELETE FROM movie WHERE id = :id';
-  
+
   const [result] = await db.execute<ResultSetHeader>(sql, { id });
-  
+
   return result.affectedRows;
 };
-
 
 const movieModel = {
   create,

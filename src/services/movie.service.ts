@@ -31,8 +31,8 @@ const getAll = async (): Promise<Movie[]> => {
 };
 const getById = async (id: number): Promise<Movie> => {
   const movie = await movieModel.getById(id);
-  if (!movie) throw new AppError(404, 'film not found')
-  return movie
+  if (!movie) throw new AppError(404, 'film not found');
+  return movie;
 };
 
 const movieService = {

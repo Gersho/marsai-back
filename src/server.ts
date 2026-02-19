@@ -34,6 +34,7 @@ app.use('/bookings', bookingRouter);
 app.use('/juries', juryRouter);
 
 app.use(errorHandler);
+app.use('/uploads', express.static('uploads'));
 
 emailService.mailerJob();
 

@@ -10,10 +10,12 @@ export const errorHandler: ErrorRequestHandler = (
   console.error(err);
   let statusCode = 500;
   let message = 'Internal server error';
+  let error = undefined;
 
   if (err instanceof AppError) {
     statusCode = err.statusCode;
     message = err.message;
+    error = err.error;
   }
 
   if (process.env.NODE_ENV === 'development' && statusCode === 500) {
@@ -22,6 +24,7 @@ export const errorHandler: ErrorRequestHandler = (
 
   res.status(statusCode).json({
     message,
+    error,
     stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
   });
 };

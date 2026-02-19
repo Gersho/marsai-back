@@ -25,8 +25,13 @@ const login = async (
   };
 };
 
+const hashPassword = async (password: string): Promise<string> => {
+  return await bcrypt.hash(password, 10);
+};
+
 const authService = {
   login,
+  hashPassword,
 };
 
 export default authService;

@@ -5,6 +5,7 @@ import type Movie from '../types/interfaces/Movie.interface.js';
 import db from '../database/connection.js';
 import collaboratorModel from '../models/collaborator.model.js';
 import imageModel from '../models/image.model.js';
+import AppError from '../helpers/AppError.js';
 
 const create = async (movieRequest: MovieRequest): Promise<MovieResponse> => {
   try {
@@ -28,6 +29,12 @@ const create = async (movieRequest: MovieRequest): Promise<MovieResponse> => {
 const getAll = async (): Promise<Movie[]> => {
   return await movieModel.getAll();
 };
+const getById = async (id: number): Promise<Movie> => {
+  const movie = await movieModel.getById(id);
+  if (!movie) throw new AppError(404, 'film not found');
+  return movie;
+};
+
 
 const deleteMovie = async (id: number): Promise<void> => {
   try {
@@ -55,7 +62,8 @@ const deleteMovie = async (id: number): Promise<void> => {
 const movieService = {
   create,
   getAll,
-  deleteMovie,
+  getById,
+  deleteMovie
 };
 
 export default movieService;

@@ -48,6 +48,17 @@ const deleteMovie: RequestHandler = async (req, res, next) => {
   }
 };
 
-const movieController = { getAll, create, deleteMovie };
+
+const getById: RequestHandler = async (_req, res, next) => {
+  try {
+    const { id } = _req.params;
+    const response = await movieService.getById(parseInt(id as string));
+    return res.send(response);
+  } catch (e) {
+    next(e);
+  }
+};
+
+const movieController = { getAll, getById, create, deleteMovie };
 
 export default movieController;

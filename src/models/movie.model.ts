@@ -15,11 +15,16 @@ const create = async (newMovie: MovieRequest): Promise<number> => {
 
   return result.insertId;
 };
-
 const getAll = async (): Promise<Movie[]> => {
   const sql = 'SELECT * FROM movie';
   const [result] = await db.query(sql);
   return result as Movie[];
+};
+
+const getById = async (id: number): Promise<Movie | null> => {
+  const sql = 'SELECT * FROM movie where id = ?';
+  const [result] = await db.query<Movie[]>(sql, [id]);
+  return result[0] ?? null;
 };
 
 const deleteMovie = async (id: number): Promise<number> => {
@@ -33,6 +38,7 @@ const deleteMovie = async (id: number): Promise<number> => {
 const movieModel = {
   create,
   getAll,
+  getById,
   deleteMovie,
 };
 

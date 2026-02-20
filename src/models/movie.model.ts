@@ -2,6 +2,8 @@ import type { ResultSetHeader } from 'mysql2';
 import db from '../database/connection.js';
 import type { MovieRequest } from '../types/schemas/MovieRequest.schema.js';
 import type Movie from '../types/interfaces/Movie.interface.js';
+import type { MovieFindAllResponse } from '../types/interfaces/MovieFindAllResponse.interface.js';
+import type { MovieCount } from '../types/interfaces/MovieFindAllResponse.interface.js';
 
 const create = async (newMovie: MovieRequest): Promise<number> => {
   const sql = `
@@ -15,10 +17,16 @@ const create = async (newMovie: MovieRequest): Promise<number> => {
 
   return result.insertId;
 };
-const getAll = async (page: number): Promise<Movie[]> => {
-  const offset: number = (page - 1) * 20;
 
-  const sql =
+const getAll = async (
+  page: number,
+  fullAi: number,
+  hybrid: number,
+  search: string,
+): Promise<MovieFindAllResponse> => {
+  const offset: number = (page - 1) * 20;
+  const sqlCount = 'SELECT COUNT(movie.id) AS total FROM movie';
+  const sqlData =
     'SELECT m.*, \
                     JSON_OBJECT( \
                         "gender", c.gender,\
@@ -28,10 +36,25 @@ const getAll = async (page: number): Promise<Movie[]> => {
               FROM movie m \
               INNER JOIN collaborator c ON m.id = c.movie_id \
               WHERE c.contribution = "Director"\
+              AND m.english_title LIKE ? \
+              AND( m.is_hybrid = ? OR m.is_hybrid = ? )\
               LIMIT 20 OFFSET ?';
 
-  const [result] = await db.query<Movie[]>(sql, [offset]);
-  return result as Movie[];
+  const fullAiForSql = fullAi === 1 ? 0 : 1;
+  search = '%' + search + '%';
+  // console.info("offset ", offset , "|| fullAiForSql ", fullAiForSql, "|| hybrid ", hybrid, "|| search ", search)
+  // console.info("sl: " , search.length)
+  const [data] = await db.query<Movie[]>(sqlData, [
+    search,
+    fullAiForSql,
+    hybrid,
+    offset,
+  ]);
+  console.info(data);
+  const count = await db.query<MovieCount[]>(sqlCount);
+  const resCount: number = count[0][0]!.total;
+
+  return { total: resCount, data } as MovieFindAllResponse;
 };
 
 const getById = async (id: number): Promise<Movie | null> => {

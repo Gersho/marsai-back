@@ -29,12 +29,12 @@ const create = async (movieRequest: MovieRequest): Promise<MovieResponse> => {
 
 const getAll = async (
   page: number,
-  fullAiAsInt: number,
-  hybridAsInt: number,
+  type: string,
   search: string,
 ): Promise<MovieFindAllResponse> => {
-  return await movieModel.getAll(page, fullAiAsInt, hybridAsInt, search);
+  return await movieModel.getAll(page, type, search);
 };
+
 const getById = async (id: number): Promise<Movie> => {
   const movie = await movieModel.getById(id);
   if (!movie) throw new AppError(404, 'film not found');

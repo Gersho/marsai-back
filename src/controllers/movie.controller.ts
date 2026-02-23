@@ -15,26 +15,18 @@ const create: RequestHandler = async (req, res, next) => {
 
 const getAll: RequestHandler = async (req, res, next) => {
   try {
-    const { page, fullAi, hybrid, search } = req.query;
+    const { page, type, search } = req.query;
     const pageAsInt = parseInt(page as string);
-    const fullAiAsInt = parseInt(fullAi as string);
-    const hybridAsInt = parseInt(hybrid as string);
     if (
       isNaN(pageAsInt) ||
       pageAsInt <= 0 ||
-      isNaN(fullAiAsInt) ||
-      fullAiAsInt > 1 ||
-      fullAiAsInt < 0 ||
-      isNaN(hybridAsInt) ||
-      hybridAsInt > 1 ||
-      hybridAsInt < 0
+      (type as string !== 'fullai' && type as string !== 'hybrid' && type as string !== 'all')
     ) {
       throw new AppError(400, 'Wrong query params');
     }
     const response = await movieService.getAll(
       pageAsInt,
-      fullAiAsInt,
-      hybridAsInt,
+      type as string,
       search as string,
     );
     return res.send(response);

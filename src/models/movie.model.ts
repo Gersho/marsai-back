@@ -20,14 +20,21 @@ const create = async (newMovie: MovieRequest): Promise<number> => {
 
 const getAll = async (
   page: number,
-  fullAi: number,
-  hybrid: number,
+  type: string,
   search: string,
 ): Promise<MovieFindAllResponse> => {
   const offset: number = (page - 1) * 20;
-  const sqlCount = 'SELECT COUNT(movie.id) AS total FROM movie';
+  const isHybridFirst: number = type === "hybrid"  ? 1 : 0;
+  const isHybridSecond: number = type === "hybrid" || type === "all" ? 1 : 0;
+
+  const sqlCount = 'SELECT COUNT(m.id) AS total \
+                    FROM movie m \
+                    INNER JOIN collaborator c ON m.id = c.movie_id \
+                    WHERE c.contribution = "Director"\
+                    AND m.english_title LIKE ? \
+                    AND( m.is_hybrid = ? OR m.is_hybrid = ? )';
   const sqlData =
-    'SELECT m.*, \
+              'SELECT m.*, \
                     JSON_OBJECT( \
                         "gender", c.gender,\
                         "firstname", c.firstname,\
@@ -40,18 +47,19 @@ const getAll = async (
               AND( m.is_hybrid = ? OR m.is_hybrid = ? )\
               LIMIT 20 OFFSET ?';
 
-  const fullAiForSql = fullAi === 1 ? 0 : 1;
   search = '%' + search + '%';
-  // console.info("offset ", offset , "|| fullAiForSql ", fullAiForSql, "|| hybrid ", hybrid, "|| search ", search)
-  // console.info("sl: " , search.length)
   const [data] = await db.query<Movie[]>(sqlData, [
     search,
-    fullAiForSql,
-    hybrid,
+    isHybridFirst,
+    isHybridSecond,
     offset,
   ]);
-  console.info(data);
-  const count = await db.query<MovieCount[]>(sqlCount);
+  const count = await db.query<MovieCount[]>(sqlCount,[
+    search,
+    isHybridFirst,
+    isHybridSecond,
+    offset,
+  ] );
   const resCount: number = count[0][0]!.total;
 
   return { total: resCount, data } as MovieFindAllResponse;

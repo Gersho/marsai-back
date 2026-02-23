@@ -48,25 +48,36 @@ const remove = async (id: number): Promise<number> => {
   return result.affectedRows;
 };
 
-const getRateByMovieIdAndJuryId = async (juryId: number, movieId: number): Promise<Rate[]> => {
-    const [result] = await db.execute(
+const getRateByMovieIdAndJuryId = async (
+  juryId: number,
+  movieId: number,
+): Promise<Rate[]> => {
+  const [result] = await db.execute(
     'SELECT id FROM ratings WHERE jury_id = ? AND movie_id = ?',
     [juryId, movieId],
   );
 
-    return result as Rate[];
-}
+  return result as Rate[];
+};
 
-const updateRateByMovieIdAndJuryId = async (juryId: number, movieId: number, rate: number): Promise<number> => {
-    const [result] = await db.execute<ResultSetHeader>(
-      'UPDATE ratings SET rating = ? WHERE jury_id = ? AND movie_id = ?',
-      [rate, juryId, movieId],
-    );
+const updateRateByMovieIdAndJuryId = async (
+  juryId: number,
+  movieId: number,
+  rate: number,
+): Promise<number> => {
+  const [result] = await db.execute<ResultSetHeader>(
+    'UPDATE ratings SET rating = ? WHERE jury_id = ? AND movie_id = ?',
+    [rate, juryId, movieId],
+  );
 
-    return result.affectedRows;
-}
+  return result.affectedRows;
+};
 
-const createRate = async (juryId: number, movieId: number, rating: number): Promise<number> => {
+const createRate = async (
+  juryId: number,
+  movieId: number,
+  rating: number,
+): Promise<number> => {
   const [result] = await db.execute<ResultSetHeader>(
     'INSERT INTO ratings (rating, jury_id, movie_id) VALUES (?, ?, ?)',
     [rating, juryId, movieId],
@@ -81,7 +92,7 @@ const movieModel = {
   remove,
   getRateByMovieIdAndJuryId,
   updateRateByMovieIdAndJuryId,
-  createRate
+  createRate,
 };
 
 export default movieModel;

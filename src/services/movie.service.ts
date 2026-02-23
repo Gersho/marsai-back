@@ -57,9 +57,7 @@ const remove = async (id: number): Promise<void> => {
   }
 };
 
-const ratingPost = async ({ juryId, movieId, rating }: RatingRequest
-) => {
-
+const ratingPost = async ({ juryId, movieId, rating }: RatingRequest) => {
   try {
     const affectedRowsMovie = await movieModel.getById(movieId);
     if (affectedRowsMovie === null) {
@@ -71,17 +69,19 @@ const ratingPost = async ({ juryId, movieId, rating }: RatingRequest
       throw new AppError(404, 'jury not found');
     }
 
-    const [existing] = await movieModel.getRateByMovieIdAndJuryId(juryId, movieId);
-    if (existing !== undefined && existing.length > 0 ) {
-      await movieModel.updateRateByMovieIdAndJuryId(juryId, movieId, rating)
+    const [existing] = await movieModel.getRateByMovieIdAndJuryId(
+      juryId,
+      movieId,
+    );
+    if (existing !== undefined && existing.length > 0) {
+      await movieModel.updateRateByMovieIdAndJuryId(juryId, movieId, rating);
       return { message: 'Note mise à jour' };
     } else {
       await movieModel.createRate(juryId, movieId, rating);
       return { message: 'Note enregistrée' };
     }
-
   } catch (err) {
-    console.error(err); 
+    console.error(err);
     throw err;
   }
 };

@@ -15,7 +15,6 @@ const create: RequestHandler = async (req, res, next) => {
 
 const ratingsPost: RequestHandler = async (req, res, next) => {
   try {
-
     const response = await movieService.ratingPost(req.body);
 
     return res.status(201).json(response);

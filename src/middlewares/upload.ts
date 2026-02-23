@@ -1,21 +1,45 @@
 import type { Request, RequestHandler } from 'express';
 import multer, { type FileFilterCallback } from 'multer';
+import { S3Client } from '@aws-sdk/client-s3';
+import multerS3 from 'multer-s3';
+import { v4 as uuidv4 } from 'uuid';
+import path from 'path';
 import {
   ALLOWED_IMAGE_TYPES,
   ALLOWED_VIDEO_TYPES,
   MAX_SIZE,
 } from '../helpers/upload-const.js';
 
-const storage = multer.diskStorage({
-  destination: function (_req, _file, cb) {
-    cb(null, 'uploads/');
+interface MulterS3File extends Express.Multer.File {
+  location: string;
+  key: string;
+  bucket: string;
+}
+
+type UploadRequest = Request & {
+  uploadedFiles?: Record<string, string>;
+};
+
+const s3Client = new S3Client({
+  region: process.env.SCALEWAY_REGION,
+  credentials: {
+    accessKeyId: process.env.SCALEWAY_ACCESS_KEY!,
+    secretAccessKey: process.env.SCALEWAY_SECRET_KEY!,
   },
-  filename: function (_req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(
-      null,
-      file.fieldname + '-' + uniqueSuffix + '.' + file.mimetype.split('/')[1],
-    );
+  endpoint: process.env.SCALEWAY_ENDPOINT,
+  forcePathStyle: true,
+});
+
+const storage = multerS3({
+  s3: s3Client,
+  bucket: process.env.SCALEWAY_BUCKET_NAME,
+  acl: 'public-read',
+  contentType: multerS3.AUTO_CONTENT_TYPE,
+  key: (_req, file, cb) => {
+    const fileExt = path.extname(file.originalname);
+    const folder = process.env.SCALEWAY_FOLDER;
+    const fileName = `${folder}/${file.fieldname}/${uuidv4()}${fileExt}`;
+    cb(null, fileName);
   },
 });
 
@@ -24,11 +48,14 @@ const fileFilter = (
   file: Express.Multer.File,
   cb: FileFilterCallback,
 ) => {
-  if (
-    ['coverImage', 'stillImageA', 'stillImageB', 'stillImageC'].includes(
-      file.fieldname,
-    )
-  ) {
+  const imageFields = [
+    'coverImage',
+    'stillImageA',
+    'stillImageB',
+    'stillImageC',
+  ];
+
+  if (imageFields.includes(file.fieldname)) {
     if (ALLOWED_IMAGE_TYPES.includes(file.mimetype)) {
       cb(null, true);
     } else {
@@ -38,15 +65,11 @@ const fileFilter = (
         ),
       );
     }
-  } else if ('video'.includes(file.fieldname)) {
+  } else if (file.fieldname === 'video') {
     if (ALLOWED_VIDEO_TYPES.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(
-        new Error(
-          `Invalid video format for ${file.fieldname}. Allowed: .mp4, .mkv`,
-        ),
-      );
+      cb(new Error(`Invalid video format. Allowed: .mp4, .mkv`));
     }
   } else {
     cb(new Error(`Unexpected field: ${file.fieldname}`));
@@ -59,8 +82,8 @@ const uploadConfig = multer({
   fileFilter,
 });
 
-export const upload: RequestHandler = (req, res, next) => {
-  const uploadMiddleware = uploadConfig.fields([
+export const upload: RequestHandler = (req: UploadRequest, res, next) => {
+  const uploadFields = uploadConfig.fields([
     { name: 'video', maxCount: 1 },
     { name: 'coverImage', maxCount: 1 },
     { name: 'stillImageA', maxCount: 1 },
@@ -68,12 +91,27 @@ export const upload: RequestHandler = (req, res, next) => {
     { name: 'stillImageC', maxCount: 1 },
   ]);
 
-  uploadMiddleware(req, res, (err) => {
+  uploadFields(req, res, (err) => {
     if (err instanceof multer.MulterError) {
-      return res.status(400).json({ message: `Upload Error: ${err.message}` });
+      return res
+        .status(400)
+        .json({ message: `Upload Limit Error: ${err.message as string}` });
     } else if (err) {
-      next(err);
+      return res.status(400).json({ message: 'error on upload' });
     }
+
+    if (!req.files) return next();
+
+    const files = req.files as Record<string, MulterS3File[]>;
+    const uploadedFiles: Record<string, string> = {};
+
+    for (const fieldName in files) {
+      if (files[fieldName]?.[0]) {
+        uploadedFiles[fieldName] = files[fieldName][0].location;
+      }
+    }
+
+    req.uploadedFiles = uploadedFiles;
     next();
   });
 };

@@ -10,6 +10,12 @@ declare global {
       JWT_SECRET: string;
       ADMIN_EMAIL: string;
       ADMIN_PASSWORD: string;
+      SCALEWAY_ACCESS_KEY: string;
+      SCALEWAY_SECRET_KEY: string;
+      SCALEWAY_ENDPOINT: string;
+      SCALEWAY_BUCKET_NAME: string;
+      SCALEWAY_REGION: string;
+      SCALEWAY_FOLDER: string;
     }
   }
 }

@@ -6,6 +6,8 @@ import db from '../database/connection.js';
 import collaboratorModel from '../models/collaborator.model.js';
 import imageModel from '../models/image.model.js';
 import AppError from '../helpers/AppError.js';
+import type { RatingRequest } from '../types/schemas/rating-request.schema.js';
+import juryModel from '../models/jury.model.js';
 
 const create = async (movieRequest: MovieRequest): Promise<MovieResponse> => {
   try {
@@ -55,8 +57,38 @@ const remove = async (id: number): Promise<void> => {
   }
 };
 
+const ratingPost = async ({ juryId, movieId, rating }: RatingRequest
+) => {
+
+  try {
+    const affectedRowsMovie = await movieModel.getById(movieId);
+    if (affectedRowsMovie === null) {
+      throw new AppError(404, 'film not found');
+    }
+
+    const affectedRowsJury = await juryModel.findById(juryId);
+    if (affectedRowsJury === null) {
+      throw new AppError(404, 'jury not found');
+    }
+
+    const [existing] = await movieModel.getRateByMovieIdAndJuryId(juryId, movieId);
+    if (existing !== undefined && existing.length > 0 ) {
+      await movieModel.updateRateByMovieIdAndJuryId(juryId, movieId, rating)
+      return { message: 'Note mise à jour' };
+    } else {
+      await movieModel.createRate(juryId, movieId, rating);
+      return { message: 'Note enregistrée' };
+    }
+
+  } catch (err) {
+    console.error(err); 
+    throw err;
+  }
+};
+
 const movieService = {
   create,
+  ratingPost,
   getAll,
   getById,
   remove,

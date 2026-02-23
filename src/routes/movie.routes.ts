@@ -14,6 +14,10 @@ movieRouter.post(
   validate(MovieRequestSchema),
   movieController.create,
 );
+movieRouter.post(
+  '/jury/:juryId/movies/:movieId/rate',
+  movieController.ratingsPost,
+);
 movieRouter.delete('/:id', movieController.remove);
 
 export default movieRouter;

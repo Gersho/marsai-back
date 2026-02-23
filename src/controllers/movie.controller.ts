@@ -13,6 +13,17 @@ const create: RequestHandler = async (req, res, next) => {
   }
 };
 
+const ratingsPost: RequestHandler = async (req, res, next) => {
+  try {
+
+    const response = await movieService.ratingPost(req.body);
+
+    return res.status(201).json(response);
+  } catch (e) {
+    next(e);
+  }
+};
+
 const getAll: RequestHandler = async (req, res, next) => {
   try {
     const { page } = req.query;
@@ -48,6 +59,6 @@ const getById: RequestHandler = async (_req, res, next) => {
   }
 };
 
-const movieController = { getAll, getById, create, remove };
+const movieController = { getAll, getById, create, ratingsPost, remove };
 
 export default movieController;

@@ -20,7 +20,9 @@ const getAll: RequestHandler = async (req, res, next) => {
     if (
       isNaN(pageAsInt) ||
       pageAsInt <= 0 ||
-      (type as string !== 'fullai' && type as string !== 'hybrid' && type as string !== 'all')
+      ((type as string) !== 'fullai' &&
+        (type as string) !== 'hybrid' &&
+        (type as string) !== 'all')
     ) {
       throw new AppError(400, 'Wrong query params');
     }

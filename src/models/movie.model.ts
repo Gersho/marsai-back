@@ -24,17 +24,18 @@ const getAll = async (
   search: string,
 ): Promise<MovieFindAllResponse> => {
   const offset: number = (page - 1) * 20;
-  const isHybridFirst: number = type === "hybrid"  ? 1 : 0;
-  const isHybridSecond: number = type === "hybrid" || type === "all" ? 1 : 0;
+  const isHybridFirst: number = type === 'hybrid' ? 1 : 0;
+  const isHybridSecond: number = type === 'hybrid' || type === 'all' ? 1 : 0;
 
-  const sqlCount = 'SELECT COUNT(m.id) AS total \
+  const sqlCount =
+    'SELECT COUNT(m.id) AS total \
                     FROM movie m \
                     INNER JOIN collaborator c ON m.id = c.movie_id \
                     WHERE c.contribution = "Director"\
                     AND m.english_title LIKE ? \
                     AND( m.is_hybrid = ? OR m.is_hybrid = ? )';
   const sqlData =
-              'SELECT m.*, \
+    'SELECT m.*, \
                     JSON_OBJECT( \
                         "gender", c.gender,\
                         "firstname", c.firstname,\
@@ -54,12 +55,12 @@ const getAll = async (
     isHybridSecond,
     offset,
   ]);
-  const count = await db.query<MovieCount[]>(sqlCount,[
+  const count = await db.query<MovieCount[]>(sqlCount, [
     search,
     isHybridFirst,
     isHybridSecond,
     offset,
-  ] );
+  ]);
   const resCount: number = count[0][0]!.total;
 
   return { total: resCount, data } as MovieFindAllResponse;

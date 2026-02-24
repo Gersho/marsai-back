@@ -18,14 +18,15 @@ const create = async (
     throw new AppError(400, 'This event is not bookable');
   }
 
-  const participantCount = await bookingModel.countByEventId(eventId);
+  const relatedIds = await eventModel.findRelatedIds(eventId);
+  const participantCount = await bookingModel.countByEventIds(relatedIds);
   if (participantCount >= event.capacity) {
     throw new AppError(409, 'Event is full');
   }
 
-  const existingBooking = await bookingModel.findByParticipantAndEvent(
+  const existingBooking = await bookingModel.findByParticipantAndEventIds(
     participantId,
-    eventId,
+    relatedIds,
   );
 
   if (existingBooking) {

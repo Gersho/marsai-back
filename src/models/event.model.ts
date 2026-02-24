@@ -71,6 +71,16 @@ const findById = async (id: number): Promise<Event | null> => {
   return rows[0] ?? null;
 };
 
-const eventModel = { create, findAll, update, remove, findById };
+const findRelatedIds = async (id: number): Promise<number[]> => {
+  const event = await findById(id);
+  if (!event) return [];
+  const [rows] = await db.query<any[]>(
+    'SELECT id FROM event WHERE date = ? AND location = ?',
+    [event.date, event.location],
+  );
+  return rows.map((row) => row.id);
+};
+
+const eventModel = { create, findAll, update, remove, findById, findRelatedIds };
 
 export default eventModel;

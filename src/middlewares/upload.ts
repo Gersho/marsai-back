@@ -1,6 +1,5 @@
 import type { Request, RequestHandler } from 'express';
 import multer, { type FileFilterCallback } from 'multer';
-import { S3Client } from '@aws-sdk/client-s3';
 import multerS3 from 'multer-s3';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
@@ -9,26 +8,13 @@ import {
   ALLOWED_VIDEO_TYPES,
   MAX_SIZE,
 } from '../helpers/upload-const.js';
+import { s3Client } from '../s3Client.js';
 
 interface MulterS3File extends Express.Multer.File {
   location: string;
   key: string;
   bucket: string;
 }
-
-type UploadRequest = Request & {
-  uploadedFiles?: Record<string, string>;
-};
-
-const s3Client = new S3Client({
-  region: process.env.SCALEWAY_REGION,
-  credentials: {
-    accessKeyId: process.env.SCALEWAY_ACCESS_KEY!,
-    secretAccessKey: process.env.SCALEWAY_SECRET_KEY!,
-  },
-  endpoint: process.env.SCALEWAY_ENDPOINT,
-  forcePathStyle: true,
-});
 
 const storage = multerS3({
   s3: s3Client,
@@ -82,7 +68,7 @@ const uploadConfig = multer({
   fileFilter,
 });
 
-export const upload: RequestHandler = (req: UploadRequest, res, next) => {
+export const upload: RequestHandler = (req: Request, res, next) => {
   const uploadFields = uploadConfig.fields([
     { name: 'video', maxCount: 1 },
     { name: 'coverImage', maxCount: 1 },
@@ -91,11 +77,11 @@ export const upload: RequestHandler = (req: UploadRequest, res, next) => {
     { name: 'stillImageC', maxCount: 1 },
   ]);
 
-  uploadFields(req, res, (err) => {
+  uploadFields(req, res, async (err) => {
     if (err instanceof multer.MulterError) {
       return res
         .status(400)
-        .json({ message: `Upload Limit Error: ${err.message as string}` });
+        .json({ message: `Upload Error: ${err.message as string}` });
     } else if (err) {
       return res.status(400).json({ message: 'error on upload' });
     }

@@ -8,7 +8,7 @@ const create: RequestHandler = async (req, res, next) => {
     const response = await movieService.create(req.body);
     return res.status(201).send(response);
   } catch (e) {
-    removeUploads(req);
+    await removeUploads(req);
     next(e);
   }
 };

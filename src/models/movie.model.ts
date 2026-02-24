@@ -48,7 +48,10 @@ const remove = async (id: number): Promise<number> => {
   return result.affectedRows;
 };
 
-const update = async (id: number, updatedMovie: MovieRequest): Promise<number> => {
+const update = async (
+  id: number,
+  updatedMovie: MovieRequest,
+): Promise<number> => {
   const sql = `
     UPDATE movie SET
       original_title = :originalTitle,
@@ -73,8 +76,6 @@ const update = async (id: number, updatedMovie: MovieRequest): Promise<number> =
 
   return result.affectedRows;
 };
-
-
 
 const movieModel = {
   create,

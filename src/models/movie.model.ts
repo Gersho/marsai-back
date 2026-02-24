@@ -48,11 +48,40 @@ const remove = async (id: number): Promise<number> => {
   return result.affectedRows;
 };
 
+const update = async (id: number, updatedMovie: MovieRequest): Promise<number> => {
+  const sql = `
+    UPDATE movie SET
+      original_title = :originalTitle,
+      english_title = :englishTitle,
+      cover_path = :coverPath,
+      duration = :duration,
+      is_hybrid = :isHybrid,
+      language = :language,
+      original_synopsis = :originalSynopsis,
+      english_synopsis = :englishSynopsis,
+      creative_process = :creativeProcess,
+      ai_tools = :aiTools,
+      has_subs = :hasSubs,
+      video_path = :videoPath
+    WHERE id = :id
+  `;
+
+  const [result] = await db.execute<ResultSetHeader>(sql, {
+    ...updatedMovie,
+    id,
+  });
+
+  return result.affectedRows;
+};
+
+
+
 const movieModel = {
   create,
   getAll,
   getById,
   remove,
+  update,
 };
 
 export default movieModel;

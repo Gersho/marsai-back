@@ -10,10 +10,21 @@ const create: RequestHandler = async (req, res, next) => {
   }
 };
 
-const findAll: RequestHandler = async (_, res, next) => {
+const findAll: RequestHandler = async (req, res, next) => {
   try {
-    const events = await eventService.findAll();
+    const { lang } = req.query;
+    const events = await eventService.findAll(lang as string);
     return res.json(events);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const findById: RequestHandler = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const event = await eventService.findById(parseInt(id as string));
+    return res.json(event);
   } catch (err) {
     next(err);
   }
@@ -39,6 +50,25 @@ const update: RequestHandler = async (req, res, next) => {
   }
 };
 
-const eventController = { create, findAll, remove, update };
+const getRemainingSeats: RequestHandler = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const remainingSeats = await eventService.getRemainingSeats(
+      parseInt(id as string),
+    );
+    return res.json({ remainingSeats });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const eventController = {
+  create,
+  findAll,
+  remove,
+  update,
+  findById,
+  getRemainingSeats,
+};
 
 export default eventController;

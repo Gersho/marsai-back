@@ -9,12 +9,8 @@ import {
   MAX_SIZE,
 } from '../helpers/upload-const.js';
 import { s3Client } from '../s3Client.js';
-
-interface MulterS3File extends Express.Multer.File {
-  location: string;
-  key: string;
-  bucket: string;
-}
+import { HeadObjectCommand } from '@aws-sdk/client-s3';
+import type MulterS3File from '../types/interfaces/multer-file.interface.js';
 
 const storage = multerS3({
   s3: s3Client,
@@ -89,15 +85,36 @@ export const upload: RequestHandler = (req: Request, res, next) => {
     if (!req.files) return next();
 
     const files = req.files as Record<string, MulterS3File[]>;
-    const uploadedFiles: Record<string, string> = {};
+    const uploadedFiles: Record<string, MulterS3File> = {};
+    const sizeCheckPromises: Promise<void>[] = [];
 
-    for (const fieldName in files) {
-      if (files[fieldName]?.[0]) {
-        uploadedFiles[fieldName] = files[fieldName][0].location;
+    try {
+      for (const fieldName in files) {
+        if (files[fieldName]?.[0]) {
+          const file = files[fieldName][0];
+
+          if (file.size === 0) {
+            const fetchSize = async () => {
+              const command = new HeadObjectCommand({
+                Bucket: file.bucket,
+                Key: file.key,
+              });
+              const response = await s3Client.send(command);
+              file.size = response.ContentLength ?? 0;
+            };
+            sizeCheckPromises.push(fetchSize());
+          }
+          uploadedFiles[fieldName] = file;
+        }
       }
+      await Promise.all(sizeCheckPromises);
+      req.uploadedFiles = uploadedFiles;
+      next();
+    } catch (e) {
+      console.error('Failed to verify S3 file sizes:', e);
+      return res
+        .status(500)
+        .json({ message: 'Server error while verifying uploads.' });
     }
-
-    req.uploadedFiles = uploadedFiles;
-    next();
   });
 };

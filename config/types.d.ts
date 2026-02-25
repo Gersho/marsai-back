@@ -5,7 +5,7 @@ declare global {
     interface Request {
       user_id: number;
       user_roles: string[];
-      uploadedFiles: Record<string, string>;
+      uploadedFiles: Record<string, MulterS3File> = {};
     }
   }
 }

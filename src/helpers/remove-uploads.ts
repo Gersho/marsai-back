@@ -1,34 +1,39 @@
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { s3Client } from '../s3Client.js';
 import type { Request } from 'express';
+import type MulterS3File from '../types/interfaces/multer-file.interface.js';
 
 export const removeUploads = async (req: Request): Promise<void> => {
   if (!req.uploadedFiles) return;
 
-  const allUrls = Object.values(req.uploadedFiles).flat();
+  console.info('Removing files from s3');
 
-  const deletePromises = allUrls.map(async (url) => {
+  const files = Object.values(req.uploadedFiles) as MulterS3File[];
+
+  console.info(
+    'files to remove: ',
+    files.map((f) => f.key),
+  );
+
+  const deletePromises = files.map(async (file) => {
     try {
-      if (!url || typeof url !== 'string') return;
-
-      const bucketName = process.env.SCALEWAY_BUCKET_NAME;
-      const urlParts = url.split(`${bucketName}/`);
-      const key = urlParts[1];
-
-      if (!key) {
-        console.error(`Could not extract key from URL: ${url}`);
+      if (!file || !file.key || !file.bucket) {
+        console.warn(
+          'Skipping deletion: Invalid file object missing key or bucket.',
+          file,
+        );
         return;
       }
 
       const command = new DeleteObjectCommand({
-        Bucket: bucketName,
-        Key: key,
+        Bucket: file.bucket,
+        Key: file.key,
       });
 
       await s3Client.send(command);
-      console.info(`Successfully deleted from S3: ${key}`);
+      console.info(`Successfully deleted from S3: ${file.key}`);
     } catch (error) {
-      console.error(`Error deleting file from S3 (${url}):`, error);
+      console.error(`Error deleting file from S3 (${file.key}):`, error);
     }
   });
 

@@ -24,23 +24,21 @@ const parseJson = (value: unknown, ctx: z.RefinementCtx) => {
 };
 
 const ImageFileSchema = z.object({
-  fieldname: z.string(),
-  originalname: z.string(),
   mimetype: z.enum(ALLOWED_IMAGE_TYPES),
-  size: z
-    .number()
-    .max(MAX_IMAGE_SIZE, { message: 'File size must be less than 15MB.' }),
-  path: z.string(),
+  size: z.number().max(MAX_IMAGE_SIZE, {
+    message: `Image size must be less than ${MAX_IMAGE_SIZE / 1048576}MB.`,
+  }),
+  location: z.url(),
+  key: z.string(),
 });
 
 const VideoFileSchema = z.object({
-  fieldname: z.string(),
-  originalname: z.string(),
   mimetype: z.enum(ALLOWED_VIDEO_TYPES),
-  size: z
-    .number()
-    .max(MAX_VIDEO_SIZE, { message: 'File size must be less than 300MB.' }),
-  path: z.string(),
+  size: z.number().max(MAX_VIDEO_SIZE, {
+    message: `Video size must be less than ${MAX_VIDEO_SIZE / 1048576}MB.`,
+  }),
+  location: z.url(),
+  key: z.string(),
 });
 
 const DirectorSchema = z.object({
@@ -75,13 +73,16 @@ const CollaboratorsSchema = z.object({
 
 export type Collaborator = z.infer<typeof CollaboratorsSchema>;
 
+const ImageUrlField = ImageFileSchema.transform((file) => file.location);
+const VideoUrlField = VideoFileSchema.transform((file) => file.location);
+
 export const MovieRequestSchema = z
   .object({
     originalTitle: z.string().min(1).max(255),
     englishTitle: z.string().min(1).max(255),
-    videoUrl: z.url(),
-    coverUrl: z.url(),
-    stillsUrls: z.array(z.url()).default([]),
+    videoUrl: VideoUrlField,
+    coverUrl: ImageUrlField,
+    stillsUrls: z.array(ImageUrlField).default([]),
     isHybrid: z
       .enum(['true', 'false'])
       .transform((v) => (v === 'true' ? true : false)),
@@ -98,11 +99,7 @@ export const MovieRequestSchema = z
   })
   .transform(async (data, ctx) => {
     try {
-      const FFPROBE_PATH = '/usr/bin/ffprobe';
-      const duration = await getVideoDurationInSeconds(
-        data.videoUrl,
-        FFPROBE_PATH,
-      );
+      const duration = await getVideoDurationInSeconds(data.videoUrl);
 
       if (duration > 90) {
         ctx.addIssue({

@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `event` (
     `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(100) NOT NULL,
     `description` TEXT,
-    `status` ENUM('ongoing', 'upcoming', 'canceled'),
+    `status` ENUM('draft', 'published', 'canceled'),
     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     `published_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,

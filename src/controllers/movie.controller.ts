@@ -15,12 +15,22 @@ const create: RequestHandler = async (req, res, next) => {
 
 const getAll: RequestHandler = async (req, res, next) => {
   try {
-    const { page } = req.query;
+    const { page, type, search } = req.query;
     const pageAsInt = parseInt(page as string);
-    if (isNaN(pageAsInt) || pageAsInt <= 0) {
+    if (
+      isNaN(pageAsInt) ||
+      pageAsInt <= 0 ||
+      ((type as string) !== 'fullai' &&
+        (type as string) !== 'hybrid' &&
+        (type as string) !== 'all')
+    ) {
       throw new AppError(400, 'Wrong query params');
     }
-    const response = await movieService.getAll(pageAsInt);
+    const response = await movieService.getAll(
+      pageAsInt,
+      type as string,
+      search as string,
+    );
     return res.send(response);
   } catch (e) {
     next(e);
@@ -48,6 +58,19 @@ const getById: RequestHandler = async (_req, res, next) => {
   }
 };
 
-const movieController = { getAll, getById, create, remove };
+const update: RequestHandler = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const response = await movieService.update(
+      parseInt(id as string),
+      req.body,
+    );
+    return res.status(200).send(response);
+  } catch (e) {
+    next(e);
+  }
+};
+const movieController = { getAll, getById, create, remove, update };
 
 export default movieController;

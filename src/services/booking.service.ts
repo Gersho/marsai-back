@@ -9,9 +9,24 @@ const create = async (
   eventId: number,
   participantId: number,
 ): Promise<number> => {
-  const existingBooking = await bookingModel.findByParticipantAndEvent(
+  const event = await eventModel.findById(eventId);
+  if (!event) {
+    throw new AppError(404, 'Event not found');
+  }
+
+  if (!event.is_bookable) {
+    throw new AppError(400, 'This event is not bookable');
+  }
+
+  const relatedIds = await eventModel.findRelatedIds(eventId);
+  const participantCount = await bookingModel.countByEventIds(relatedIds);
+  if (participantCount >= event.capacity) {
+    throw new AppError(409, 'Event is full');
+  }
+
+  const existingBooking = await bookingModel.findByParticipantAndEventIds(
     participantId,
-    eventId,
+    relatedIds,
   );
 
   if (existingBooking) {
@@ -20,10 +35,9 @@ const create = async (
 
   const bookingId = await bookingModel.create(eventId, participantId);
 
-  const event = await eventModel.findById(eventId);
   const participant = await participantModel.findById(participantId);
 
-  if (event && participant) {
+  if (participant) {
     const token = jwtService.signSubscribeEventToken({ id: bookingId });
     await emailService.sendMailSubscribeEvent(
       participant.email,

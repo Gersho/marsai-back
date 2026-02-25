@@ -8,7 +8,6 @@ import bookingModel from '../models/booking.model.js';
 const create = async (body: CreateEventRequest): Promise<void> => {
   await eventModel.create(body);
 };
-
 const findAll = async (lang?: string): Promise<Event[]> => {
   return await eventModel.findAll(lang);
 };
@@ -26,7 +25,8 @@ const getRemainingSeats = async (id: number): Promise<number> => {
   if (!event) {
     throw new AppError(404, 'Event not found');
   }
-  const bookedSeats = await bookingModel.countByEventId(id);
+  const relatedIds = await eventModel.findRelatedIds(id);
+  const bookedSeats = await bookingModel.countByEventIds(relatedIds);
   return event.capacity - bookedSeats;
 };
 

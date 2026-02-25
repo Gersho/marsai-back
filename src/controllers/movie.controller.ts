@@ -55,7 +55,7 @@ const getById: RequestHandler = async (req, res, next) => {
     if (isNaN(idAsInt) || idAsInt <= 0) {
       throw new AppError(400, 'Wrong query params');
     }
-    const response = await movieService.getById(parseInt(id as string));
+    const response = await movieService.getById(idAsInt);
     return res.send(response);
   } catch (e) {
     next(e);

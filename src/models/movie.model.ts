@@ -106,7 +106,6 @@ const getById = async (id: number): Promise<Movie | null> => {
   const [result] = await db.query<Movie[]>(sql, [id]);
 
   return (result[0] as Movie) ?? null;
-  // return {director: director, result};
 };
 
 const remove = async (id: number): Promise<number> => {

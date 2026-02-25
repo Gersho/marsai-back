@@ -67,9 +67,45 @@ const getAll = async (
 };
 
 const getById = async (id: number): Promise<Movie | null> => {
-  const sql = 'SELECT * FROM movie where id = ?';
+  const sql =
+    'SELECT m.*, \
+    JSON_OBJECT( \
+        "gender", dir.gender,\
+        "firstname", dir.firstname,\
+        "lastname", dir.lastname,\
+        "contribution", dir.contribution,\
+        "email", dir.email,\
+        "job", dir.job,\
+        "address", dir.address,\
+        "zipcode", dir.zipcode,\
+        "city", dir.city,\
+        "region", dir.region,\
+        "country", dir.country,\
+        "phone", dir.phone,\
+        "birthdate", dir.birthdate,\
+        "facebook_url", dir.facebook_url,\
+        "instagram_url", dir.instagram_url,\
+        "youtube_url", dir.youtube_url,\
+        "linkedin_url", dir.linkedin_url,\
+        "twitter_url", dir.twitter_url\
+            ) AS director, \
+    JSON_ARRAYAGG( \
+        JSON_OBJECT( \
+            "gender", c.gender,\
+            "firstname", c.firstname,\
+            "lastname", c.lastname,\
+            "contribution", c.contribution,\
+            "email", c.email\
+    )) AS collaborators \
+    FROM movie m \
+    INNER JOIN collaborator c ON m.id = c.movie_id AND c.contribution <> "Director"\
+    INNER JOIN collaborator dir ON m.id = dir.movie_id AND dir.contribution = "Director"   \
+    WHERE m.id = ? \
+    GROUP BY dir.id';
+
   const [result] = await db.query<Movie[]>(sql, [id]);
-  return result[0] ?? null;
+
+  return (result[0] as Movie) ?? null;
 };
 
 const remove = async (id: number): Promise<number> => {

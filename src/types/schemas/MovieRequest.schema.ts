@@ -99,7 +99,10 @@ export const MovieRequestSchema = z
   })
   .transform(async (data, ctx) => {
     try {
-      const duration = await getVideoDurationInSeconds(data.videoUrl);
+      const duration = await getVideoDurationInSeconds(
+        data.videoUrl,
+        '/usr/bin/ffprobe',
+      );
 
       if (duration > 90) {
         ctx.addIssue({
@@ -112,6 +115,7 @@ export const MovieRequestSchema = z
 
       return { ...data, duration };
     } catch (e) {
+      console.error(e);
       ctx.addIssue({
         code: 'custom',
         message: 'Could not verify video duration.',

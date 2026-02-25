@@ -8,12 +8,11 @@ import { toSnakeCase } from '../helpers/string-utils.js';
 
 const create = async (newMovie: MovieRequest): Promise<number> => {
   const sql = `
-    INSERT INTO movie 
-    (original_title, english_title, cover_path, duration, is_hybrid, language, original_synopsis, english_synopsis, creative_process, ai_tools, has_subs, video_path) 
-    VALUES 
-    (:originalTitle, :englishTitle, :coverPath, :duration, :isHybrid, :language, :originalSynopsis, :englishSynopsis, :creativeProcess, :aiTools, :hasSubs, :videoPath)
+  INSERT INTO movie 
+  (original_title, english_title, cover_path, duration, is_hybrid, language, original_synopsis, english_synopsis, creative_process, ai_tools, has_subs, video_path) 
+  VALUES 
+  (:originalTitle, :englishTitle, :coverUrl, :duration, :isHybrid, :language, :originalSynopsis, :englishSynopsis, :creativeProcess, :aiTools, :hasSubs, :videoUrl)
   `;
-
   const [result] = await db.execute<ResultSetHeader>(sql, newMovie);
 
   return result.insertId;

@@ -24,23 +24,21 @@ const parseJson = (value: unknown, ctx: z.RefinementCtx) => {
 };
 
 const ImageFileSchema = z.object({
-  fieldname: z.string(),
-  originalname: z.string(),
   mimetype: z.enum(ALLOWED_IMAGE_TYPES),
-  size: z
-    .number()
-    .max(MAX_IMAGE_SIZE, { message: 'File size must be less than 15MB.' }),
-  path: z.string(),
+  size: z.number().max(MAX_IMAGE_SIZE, {
+    message: `Image size must be less than ${MAX_IMAGE_SIZE / 1048576}MB.`,
+  }),
+  location: z.url(),
+  key: z.string(),
 });
 
 const VideoFileSchema = z.object({
-  fieldname: z.string(),
-  originalname: z.string(),
   mimetype: z.enum(ALLOWED_VIDEO_TYPES),
-  size: z
-    .number()
-    .max(MAX_VIDEO_SIZE, { message: 'File size must be less than 300MB.' }),
-  path: z.string(),
+  size: z.number().max(MAX_VIDEO_SIZE, {
+    message: `Video size must be less than ${MAX_VIDEO_SIZE / 1048576}MB.`,
+  }),
+  location: z.url(),
+  key: z.string(),
 });
 
 const DirectorSchema = z.object({
@@ -75,16 +73,16 @@ const CollaboratorsSchema = z.object({
 
 export type Collaborator = z.infer<typeof CollaboratorsSchema>;
 
+const ImageUrlField = ImageFileSchema.transform((file) => file.location);
+const VideoUrlField = VideoFileSchema.transform((file) => file.location);
+
 export const MovieRequestSchema = z
   .object({
     originalTitle: z.string().min(1).max(255),
     englishTitle: z.string().min(1).max(255),
-    video: z.array(VideoFileSchema).nonempty(),
-    coverImage: z.array(ImageFileSchema).nonempty(),
-    stillImageA: z.array(ImageFileSchema).nullish(),
-    stillImageB: z.array(ImageFileSchema).nullish(),
-    stillImageC: z.array(ImageFileSchema).nullish(),
-    // duration: z.coerce.number().int().positive().max(90),
+    videoUrl: VideoUrlField,
+    coverUrl: ImageUrlField,
+    stillsUrls: z.array(ImageUrlField).default([]),
     isHybrid: z
       .enum(['true', 'false'])
       .transform((v) => (v === 'true' ? true : false)),
@@ -100,37 +98,31 @@ export const MovieRequestSchema = z
     collaborators: z.preprocess(parseJson, z.array(CollaboratorsSchema)),
   })
   .transform(async (data, ctx) => {
-    const {
-      coverImage,
-      video,
-      stillImageA,
-      stillImageB,
-      stillImageC,
-      ...rest
-    } = data;
+    try {
+      const duration = await getVideoDurationInSeconds(
+        data.videoUrl,
+        '/usr/bin/ffprobe',
+      );
 
-    const duration = await getVideoDurationInSeconds(video[0]!.path);
+      if (duration > 90) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Video cannot be longer than 90 seconds.',
+          path: ['videoUrl'],
+        });
+        return z.NEVER;
+      }
 
-    if (duration > 90) {
+      return { ...data, duration };
+    } catch (e) {
+      console.error(e);
       ctx.addIssue({
         code: 'custom',
-        message: 'Video cannot be longer than 90 seconds.',
-        path: ['video'],
+        message: 'Could not verify video duration.',
+        path: ['videoUrl'],
       });
       return z.NEVER;
     }
-
-    const stillsPath = [stillImageA, stillImageB, stillImageC]
-      .map((fileArray) => fileArray?.[0]?.path)
-      .filter((path): path is string => !!path);
-
-    return {
-      ...rest,
-      videoPath: video[0]!.path,
-      duration,
-      coverPath: coverImage[0]!.path,
-      stillsPath,
-    };
   });
 
 export type MovieRequest = z.infer<typeof MovieRequestSchema>;

@@ -11,17 +11,21 @@ let transporter: nodemailer.Transporter<
   SMTPTransport.Options
 >;
 if (process.env.NODE_ENV === 'development') {
-  const testAccount = await nodemailer.createTestAccount();
-  console.info(testAccount);
-  transporter = nodemailer.createTransport({
-    host: testAccount.smtp.host,
-    port: testAccount.smtp.port,
-    secure: testAccount.smtp.secure,
-    auth: {
-      user: testAccount.user,
-      pass: testAccount.pass,
-    },
-  });
+  try {
+    const testAccount = await nodemailer.createTestAccount();
+    console.info(testAccount);
+    transporter = nodemailer.createTransport({
+      host: testAccount.smtp.host,
+      port: testAccount.smtp.port,
+      secure: testAccount.smtp.secure,
+      auth: {
+        user: testAccount.user,
+        pass: testAccount.pass,
+      },
+    });
+  } catch (e) {
+    console.error('failed to create test account mail', e);
+  }
 } else {
   transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',

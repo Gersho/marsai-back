@@ -14,7 +14,7 @@ const create = async (movieRequest: MovieRequest): Promise<MovieResponse> => {
     const movieId = await movieModel.create(movieRequest);
     await collaboratorModel.createDirector(movieRequest.director, movieId);
     await collaboratorModel.create(movieRequest.collaborators, movieId);
-    await imageModel.insertMultiple(movieRequest.stillsPath, movieId);
+    await imageModel.insertMultiple(movieRequest.stillsUrls, movieId);
     await db.commit();
     const response: MovieResponse = {
       movieId: movieId,

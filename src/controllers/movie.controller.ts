@@ -48,9 +48,13 @@ const remove: RequestHandler = async (req, res, next) => {
   }
 };
 
-const getById: RequestHandler = async (_req, res, next) => {
+const getById: RequestHandler = async (req, res, next) => {
   try {
-    const { id } = _req.params;
+    const { id } = req.params;
+    const idAsInt = parseInt(id as string);
+    if (isNaN(idAsInt) || idAsInt <= 0) {
+      throw new AppError(400, 'Wrong query params');
+    }
     const response = await movieService.getById(parseInt(id as string));
     return res.send(response);
   } catch (e) {

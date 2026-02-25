@@ -67,7 +67,7 @@ const update: RequestHandler = async (req, res, next) => {
       parseInt(id as string),
       req.body,
     );
-    return res.status(201).send(response);
+    return res.status(200).send(response);
   } catch (e) {
     next(e);
   }

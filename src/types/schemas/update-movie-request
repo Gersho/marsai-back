@@ -3,19 +3,17 @@ import { z } from 'zod';
 
 export const UpdateMovieRequestSchema = z
   .object( {
-  original_title: z.string().nonempty(),
-  english_title: z.string().nonempty(),
-  submitted_at: z.coerce.date(),
-  youtube_url:z.string().nonempty(),
-  cover_image: z.string().nonempty(),
+  originalTitle: z.string().nonempty(),
+  englishTitle: z.string().nonempty(),
+  coverImage: z.string().nonempty(),
   duration:z.number().int().positive(),
-  is_hybrid:  z.boolean(),
+  isHybrid:  z.boolean(),
   language: z.enum(Languages),
-  original_synopsis: z.string().nonempty(),
-  english_synopsis: z.string().nonempty(),
-  creative_process: z.string().nonempty(),
-  ia_tools: z.string().nonempty(),
-  has_subs: z.boolean(),
+  originalSynopsis: z.string().nonempty(),
+  englishSynopsis: z.string().nonempty(),
+  creativeProcess: z.string().nonempty(),
+  iaTools: z.string().nonempty(),
+  hasSubs: z.boolean(),
   srt: z.string().nonempty(),
   status: z.enum(['draft', 'published', 'archived']),
 })

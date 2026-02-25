@@ -3,6 +3,7 @@ import movieController from '../controllers/movie.controller.js';
 import { validate } from '../middlewares/validate.js';
 import { MovieRequestSchema } from '../types/schemas/MovieRequest.schema.js';
 import { upload } from '../middlewares/upload.js';
+import { isLogged } from '../middlewares/is-logged.js';
 
 const movieRouter = express.Router();
 
@@ -15,7 +16,8 @@ movieRouter.post(
   movieController.create,
 );
 movieRouter.post(
-  '/jury/:juryId/movies/:movieId/rate',
+  '/movies/:movieId/rate',
+  isLogged,
   movieController.ratingsPost,
 );
 movieRouter.delete('/:id', movieController.remove);

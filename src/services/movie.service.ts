@@ -8,7 +8,7 @@ import imageModel from '../models/image.model.js';
 import AppError from '../helpers/AppError.js';
 import type { RatingRequest } from '../types/schemas/rating-request.schema.js';
 import juryModel from '../models/jury.model.js';
-import type { MovieFindAllResponse } from '../types/interfaces/MovieFindAllResponse.interface.js';
+import type { MovieFindAllResponse } from '../types/interfaces/MovieFindAllResponse.interface.js';  
 
 const create = async (movieRequest: MovieRequest): Promise<MovieResponse> => {
   try {

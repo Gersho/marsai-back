@@ -4,6 +4,7 @@ import type { MovieRequest } from '../types/schemas/MovieRequest.schema.js';
 import type Movie from '../types/interfaces/Movie.interface.js';
 import type { MovieFindAllResponse } from '../types/interfaces/MovieFindAllResponse.interface.js';
 import type { MovieCount } from '../types/interfaces/MovieFindAllResponse.interface.js';
+import { toSnakeCase } from '../helpers/string-utils.js';
 
 const create = async (newMovie: MovieRequest): Promise<number> => {
   const sql = `
@@ -79,32 +80,25 @@ const remove = async (id: number): Promise<number> => {
 
   return result.affectedRows;
 };
+const update = async (id: number, movie: MovieRequest): Promise<number> => {
+  const fields: string[] = [];
+  const values: (string | number | Date | boolean)[] = [];
 
-const update = async (
-  id: number,
-  updatedMovie: MovieRequest,
-): Promise<number> => {
-  const sql = `
-    UPDATE movie SET
-      original_title = :originalTitle,
-      english_title = :englishTitle,
-      cover_path = :coverPath,
-      duration = :duration,
-      is_hybrid = :isHybrid,
-      language = :language,
-      original_synopsis = :originalSynopsis,
-      english_synopsis = :englishSynopsis,
-      creative_process = :creativeProcess,
-      ai_tools = :aiTools,
-      has_subs = :hasSubs,
-      video_path = :videoPath
-    WHERE id = :id
-  `;
+  for (const [key, value] of Object.entries(movie)) {
+    fields.push(`${toSnakeCase(key)} = ?`);
+    values.push(value as string | number | Date | boolean);
+  }
 
-  const [result] = await db.execute<ResultSetHeader>(sql, {
-    ...updatedMovie,
-    id,
-  });
+  if (fields.length === 0) {
+    return 0; // No fields to update
+  }
+
+  values.push(id); // Add id for the WHERE clause
+
+  const [result] = await db.execute<ResultSetHeader>(
+    `UPDATE movie SET ${fields.join(', ')} WHERE id = ?`,
+    values,
+  );
 
   return result.affectedRows;
 };

@@ -17,6 +17,6 @@ movieRouter.post(
   movieController.create,
 );
 movieRouter.delete('/:id', movieController.remove);
-movieRouter.put('/movies/:id', isLogged, isAdmin, movieController.update);
+movieRouter.put('/:id', isLogged, isAdmin, movieController.update);
 
 export default movieRouter;

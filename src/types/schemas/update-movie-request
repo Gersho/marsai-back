@@ -1,0 +1,24 @@
+import { Languages } from '../enums/languages.enum.js';
+import { z } from 'zod';
+
+export const UpdateMovieRequestSchema = z
+  .object( {
+  original_title: z.string().nonempty(),
+  english_title: z.string().nonempty(),
+  submitted_at: z.coerce.date(),
+  youtube_url:z.string().nonempty(),
+  cover_image: z.string().nonempty(),
+  duration:z.number().int().positive(),
+  is_hybrid:  z.boolean(),
+  language: z.enum(Languages),
+  original_synopsis: z.string().nonempty(),
+  english_synopsis: z.string().nonempty(),
+  creative_process: z.string().nonempty(),
+  ia_tools: z.string().nonempty(),
+  has_subs: z.boolean(),
+  srt: z.string().nonempty(),
+  status: z.enum(['draft', 'published', 'archived']),
+})
+.partial();
+
+export type UpdateEventRequest = z.infer<typeof UpdateMovieRequestSchema>;

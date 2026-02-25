@@ -61,6 +61,8 @@ const getById: RequestHandler = async (_req, res, next) => {
 const update: RequestHandler = async (req, res, next) => {
   try {
     const { id } = req.params;
+    console.log(id);
+
     const response = await movieService.update(
       parseInt(id as string),
       req.body,

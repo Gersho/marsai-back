@@ -13,7 +13,7 @@ export const isLogged: RequestHandler = (
   }
 
   try {
-  const payload = jwtService.verify(token);
+    const payload = jwtService.verify(token);
     req.user_id = payload.id;
     req.user_roles = payload.roles;
     return next();

@@ -16,6 +16,11 @@ movieRouter.post(
   validate(MovieRequestSchema),
   movieController.create,
 );
+movieRouter.post(
+  '/movies/:movieId/rate',
+  isLogged,
+  movieController.ratingsPost,
+);
 movieRouter.delete('/:id', movieController.remove);
 movieRouter.put('/:id', isLogged, isAdmin, movieController.update);
 

@@ -13,6 +13,20 @@ const create: RequestHandler = async (req, res, next) => {
   }
 };
 
+const ratingsPost: RequestHandler = async (req, res, next) => {
+  try {
+    const jury_id = req.user_id;
+    if (!jury_id) {
+      return res.status(400).send('accès non autorisé');
+    }
+    const response = await movieService.ratingPost(req.body);
+
+    return res.status(201).json(response);
+  } catch (e) {
+    next(e);
+  }
+};
+
 const getAll: RequestHandler = async (req, res, next) => {
   try {
     const { page, type, search } = req.query;

@@ -42,5 +42,12 @@ const findAll = async (): Promise<Jury[]> => {
   return juries;
 };
 
-const juryModel = { create, findAll };
+const findById = async (juryId: number): Promise<Jury | null> => {
+  const sql =
+    'SELECT u.id, u.email, u.firstname, u.lastname FROM user u JOIN role_user ru ON ru.user_id = u.id WHERE ru.role_id = 2 AND id = ?';
+  const [result] = await db.query<Jury[]>(sql, [juryId]);
+  return result[0] ?? null;
+};
+
+const juryModel = { create, findAll, findById };
 export default juryModel;

@@ -8,13 +8,19 @@ export const validate =
     try {
       const dataToValidate: Record<string, unknown> = {
         ...(req.body as Record<string, unknown>),
-        ...((req.files as Record<string, unknown>) || {}),
+        videoUrl: req.uploadedFiles?.video,
+        coverUrl: req.uploadedFiles?.coverImage,
+        stillsUrls: [
+          req.uploadedFiles?.stillImageA,
+          req.uploadedFiles?.stillImageB,
+          req.uploadedFiles?.stillImageC,
+        ].filter(Boolean),
       };
       req.body = await schema.parseAsync(dataToValidate);
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        removeUploads(req);
+        await removeUploads(req);
         return res.status(400).json({
           message: 'Validation failed',
           errors: error.issues,

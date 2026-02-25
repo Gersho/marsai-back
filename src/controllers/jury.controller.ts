@@ -4,7 +4,7 @@ import juryService from '../services/jury.service.js';
 const create: RequestHandler = async (req, res, next) => {
   try {
     await juryService.addJuries(req.body);
-    res.send();
+    res.status(201).send();
   } catch (e) {
     next(e);
   }

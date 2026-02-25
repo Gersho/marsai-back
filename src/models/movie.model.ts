@@ -5,15 +5,15 @@ import type Movie from '../types/interfaces/Movie.interface.js';
 import type Rate from '../types/interfaces/rate.interface.js';
 import type { MovieFindAllResponse } from '../types/interfaces/MovieFindAllResponse.interface.js';
 import type { MovieCount } from '../types/interfaces/MovieFindAllResponse.interface.js';
+import { toSnakeCase } from '../helpers/string-utils.js';
 
 const create = async (newMovie: MovieRequest): Promise<number> => {
   const sql = `
-    INSERT INTO movie 
-    (original_title, english_title, cover_path, duration, is_hybrid, language, original_synopsis, english_synopsis, creative_process, ai_tools, has_subs, video_path) 
-    VALUES 
-    (:originalTitle, :englishTitle, :coverPath, :duration, :isHybrid, :language, :originalSynopsis, :englishSynopsis, :creativeProcess, :aiTools, :hasSubs, :videoPath)
+  INSERT INTO movie 
+  (original_title, english_title, cover_path, duration, is_hybrid, language, original_synopsis, english_synopsis, creative_process, ai_tools, has_subs, video_path) 
+  VALUES 
+  (:originalTitle, :englishTitle, :coverUrl, :duration, :isHybrid, :language, :originalSynopsis, :englishSynopsis, :creativeProcess, :aiTools, :hasSubs, :videoUrl)
   `;
-
   const [result] = await db.execute<ResultSetHeader>(sql, newMovie);
 
   return result.insertId;
@@ -68,9 +68,45 @@ const getAll = async (
 };
 
 const getById = async (id: number): Promise<Movie | null> => {
-  const sql = 'SELECT * FROM movie where id = ?';
+  const sql =
+    'SELECT m.*, \
+    JSON_OBJECT( \
+        "gender", dir.gender,\
+        "firstname", dir.firstname,\
+        "lastname", dir.lastname,\
+        "contribution", dir.contribution,\
+        "email", dir.email,\
+        "job", dir.job,\
+        "address", dir.address,\
+        "zipcode", dir.zipcode,\
+        "city", dir.city,\
+        "region", dir.region,\
+        "country", dir.country,\
+        "phone", dir.phone,\
+        "birthdate", dir.birthdate,\
+        "facebook_url", dir.facebook_url,\
+        "instagram_url", dir.instagram_url,\
+        "youtube_url", dir.youtube_url,\
+        "linkedin_url", dir.linkedin_url,\
+        "twitter_url", dir.twitter_url\
+            ) AS director, \
+    JSON_ARRAYAGG( \
+        JSON_OBJECT( \
+            "gender", c.gender,\
+            "firstname", c.firstname,\
+            "lastname", c.lastname,\
+            "contribution", c.contribution,\
+            "email", c.email\
+    )) AS collaborators \
+    FROM movie m \
+    INNER JOIN collaborator c ON m.id = c.movie_id AND c.contribution <> "Director"\
+    INNER JOIN collaborator dir ON m.id = dir.movie_id AND dir.contribution = "Director"   \
+    WHERE m.id = ? \
+    GROUP BY dir.id';
+
   const [result] = await db.query<Movie[]>(sql, [id]);
-  return result[0] ?? null;
+
+  return (result[0] as Movie) ?? null;
 };
 
 const remove = async (id: number): Promise<number> => {
@@ -117,6 +153,28 @@ const createRate = async (
   );
   return result.insertId;
 };
+const update = async (id: number, movie: MovieRequest): Promise<number> => {
+  const fields: string[] = [];
+  const values: (string | number | Date | boolean)[] = [];
+
+  for (const [key, value] of Object.entries(movie)) {
+    fields.push(`${toSnakeCase(key)} = ?`);
+    values.push(value as string | number | Date | boolean);
+  }
+
+  if (fields.length === 0) {
+    return 0; // No fields to update
+  }
+
+  values.push(id); // Add id for the WHERE clause
+
+  const [result] = await db.execute<ResultSetHeader>(
+    `UPDATE movie SET ${fields.join(', ')} WHERE id = ?`,
+    values,
+  );
+
+  return result.affectedRows;
+};
 
 const movieModel = {
   create,
@@ -126,6 +184,7 @@ const movieModel = {
   getRateByMovieIdAndJuryId,
   updateRateByMovieIdAndJuryId,
   createRate,
+  update,
 };
 
 export default movieModel;

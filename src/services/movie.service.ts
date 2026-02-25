@@ -16,7 +16,7 @@ const create = async (movieRequest: MovieRequest): Promise<MovieResponse> => {
     const movieId = await movieModel.create(movieRequest);
     await collaboratorModel.createDirector(movieRequest.director, movieId);
     await collaboratorModel.create(movieRequest.collaborators, movieId);
-    await imageModel.insertMultiple(movieRequest.stillsPath, movieId);
+    await imageModel.insertMultiple(movieRequest.stillsUrls, movieId);
     await db.commit();
     const response: MovieResponse = {
       movieId: movieId,
@@ -62,6 +62,13 @@ const remove = async (id: number): Promise<void> => {
     throw err;
   }
 };
+const update = async (id: number, update: MovieRequest): Promise<number> => {
+  const affectedRows = await movieModel.update(id, update);
+  if (affectedRows === 0) {
+    throw new AppError(404, `movie not found`);
+  }
+  return affectedRows;
+};
 
 const ratingPost = async ({ juryId, movieId, rating }: RatingRequest) => {
   try {
@@ -98,6 +105,7 @@ const movieService = {
   getAll,
   getById,
   remove,
+  update,
 };
 
 export default movieService;

@@ -60,12 +60,20 @@ const remove = async (id: number): Promise<void> => {
     throw err;
   }
 };
+const update = async (id: number, update: MovieRequest): Promise<number> => {
+  const affectedRows = await movieModel.update(id, update);
+  if (affectedRows === 0) {
+    throw new AppError(404, `movie not found`);
+  }
+  return affectedRows;
+};
 
 const movieService = {
   create,
   getAll,
   getById,
   remove,
+  update,
 };
 
 export default movieService;

@@ -58,6 +58,20 @@ const getById: RequestHandler = async (_req, res, next) => {
   }
 };
 
-const movieController = { getAll, getById, create, remove };
+const update: RequestHandler = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    console.log(id);
+
+    const response = await movieService.update(
+      parseInt(id as string),
+      req.body,
+    );
+    return res.status(200).send(response);
+  } catch (e) {
+    next(e);
+  }
+};
+const movieController = { getAll, getById, create, remove, update };
 
 export default movieController;

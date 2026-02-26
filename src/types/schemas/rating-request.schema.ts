@@ -1,7 +1,6 @@
 import z from 'zod';
 
 export const RatingRequestSchema = z.object({
-  juryId: z.number().int().positive(),
   movieId: z.number().int().positive(),
   rating: z.number().int().gte(1).lte(10),
 });

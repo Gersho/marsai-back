@@ -15,13 +15,9 @@ const create: RequestHandler = async (req, res, next) => {
 
 const ratingsPost: RequestHandler = async (req, res, next) => {
   try {
-    const jury_id = req.user_id;
-    if (!jury_id) {
-      return res.status(400).send('accès non autorisé');
-    }
-    const response = await movieService.ratingPost(req.body);
+    await movieService.ratingPost(req.body, req.user_id);
 
-    return res.status(201).json(response);
+    return res.status(201).send();
   } catch (e) {
     next(e);
   }
@@ -89,6 +85,13 @@ const update: RequestHandler = async (req, res, next) => {
     next(e);
   }
 };
-const movieController = { getAll, getById, create, remove, update };
+const movieController = {
+  getAll,
+  getById,
+  create,
+  remove,
+  update,
+  ratingsPost,
+};
 
 export default movieController;

@@ -1,6 +1,7 @@
 import type MovieResponse from '../types/interfaces/MovieResponse.interface.js';
 import movieModel from '../models/movie.model.js';
 import type { MovieRequest } from '../types/schemas/MovieRequest.schema.js';
+import { generateUniqueSlug } from '../helpers/string-utils.js';
 import type Movie from '../types/interfaces/Movie.interface.js';
 import db from '../database/connection.js';
 import collaboratorModel from '../models/collaborator.model.js';
@@ -12,7 +13,14 @@ import type { MovieFindAllResponse } from '../types/interfaces/MovieFindAllRespo
 const create = async (movieRequest: MovieRequest): Promise<MovieResponse> => {
   try {
     await db.beginTransaction();
-    const movieId = await movieModel.create(movieRequest);
+    const slug = await generateUniqueSlug(
+      movieRequest.originalTitle,
+      async (slug) => {
+        const exists = await movieModel.getBySlug(slug);
+        return !!exists;
+      },
+    );
+    const movieId = await movieModel.create({ ...movieRequest, slug });
     await collaboratorModel.createDirector(movieRequest.director, movieId);
     await collaboratorModel.create(movieRequest.collaborators, movieId);
     await imageModel.insertMultiple(movieRequest.stillsUrls, movieId);
@@ -27,7 +35,6 @@ const create = async (movieRequest: MovieRequest): Promise<MovieResponse> => {
     throw err;
   }
 };
-
 const getAll = async (
   page: number,
   type: string,
@@ -38,6 +45,12 @@ const getAll = async (
 
 const getById = async (id: number): Promise<Movie> => {
   const movie = await movieModel.getById(id);
+  if (!movie) throw new AppError(404, 'film not found');
+  return movie;
+};
+
+const getBySlug = async (slug: string): Promise<Movie> => {
+  const movie = await movieModel.getBySlug(slug);
   if (!movie) throw new AppError(404, 'film not found');
   return movie;
 };
@@ -61,8 +74,21 @@ const remove = async (id: number): Promise<void> => {
     throw err;
   }
 };
-const update = async (id: number, update: MovieRequest): Promise<number> => {
-  const affectedRows = await movieModel.update(id, update);
+const update = async (
+  id: number,
+  movieRequest: MovieRequest,
+): Promise<number> => {
+  if (movieRequest.originalTitle) {
+    const slug = await generateUniqueSlug(
+      movieRequest.originalTitle,
+      async (slug) => {
+        const existing = await movieModel.getBySlug(slug);
+        return !!existing && existing.id !== id;
+      },
+    );
+    movieRequest.slug = slug;
+  }
+  const affectedRows = await movieModel.update(id, movieRequest);
   if (affectedRows === 0) {
     throw new AppError(404, `movie not found`);
   }
@@ -99,6 +125,7 @@ const movieService = {
   ratingPost,
   getAll,
   getById,
+  getBySlug,
   remove,
   update,
 };

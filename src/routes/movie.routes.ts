@@ -20,7 +20,6 @@ movieRouter.post(
   isLogged,
   movieController.ratingsPost,
 );
-movieRouter.get('/:id', movieController.getById);
 movieRouter.delete('/:id', movieController.remove);
 movieRouter.put('/:id', isLogged, isAdmin, movieController.update);
 movieRouter.get('/:slug', movieController.getBySlug);

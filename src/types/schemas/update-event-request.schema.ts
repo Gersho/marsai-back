@@ -17,10 +17,14 @@ export const UpdateEventRequestSchema = z
   })
   .refine(
     (data) => {
-      const hasTranslationField = data.title !== undefined || data.description !== undefined;
+      const hasTranslationField =
+        data.title !== undefined || data.description !== undefined;
       return !hasTranslationField || data.lang !== undefined;
     },
-    { message: 'lang is required when updating title or description', path: ['lang'] },
+    {
+      message: 'lang is required when updating title or description',
+      path: ['lang'],
+    },
   );
 
 export type UpdateEventRequest = z.infer<typeof UpdateEventRequestSchema>;

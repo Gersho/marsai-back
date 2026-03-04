@@ -25,7 +25,6 @@ const findByParticipantAndEvent = async (
   return rows[0] ?? null;
 };
 
-
 const remove = async (id: number): Promise<number> => {
   const [result] = await db.execute<ResultSetHeader>(
     'DELETE FROM booking WHERE id = ?',

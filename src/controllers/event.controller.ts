@@ -24,7 +24,10 @@ const findById: RequestHandler = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { lang } = req.query;
-    const event = await eventService.findById(parseInt(id as string), lang as string);
+    const event = await eventService.findById(
+      parseInt(id as string),
+      lang as string,
+    );
     return res.json(event);
   } catch (err) {
     next(err);

@@ -8,7 +8,15 @@ const create = async (event: CreateEventRequest): Promise<void> => {
   const [result] = await db.execute<ResultSetHeader>(
     `INSERT INTO event (slug, date, published_at, duration, location, is_bookable, capacity)
     VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    [event.slug, event.date, event.publishedAt, event.duration, event.location, event.isBookable, event.capacity],
+    [
+      event.slug,
+      event.date,
+      event.publishedAt,
+      event.duration,
+      event.location,
+      event.isBookable,
+      event.capacity,
+    ],
   );
   await db.execute(
     `INSERT INTO event_translation (event_id, lang, title, description) VALUES (?, ?, ?, ?)`,
@@ -66,7 +74,10 @@ const getRemainingSeats = async (id: number): Promise<number | null> => {
   return rows[0] ? (rows[0].remaining_seats as number) : null;
 };
 
-const update = async (id: number, event: UpdateEventRequest): Promise<number> => {
+const update = async (
+  id: number,
+  event: UpdateEventRequest,
+): Promise<number> => {
   const eventFieldMap: Record<string, string> = {
     slug: 'slug',
     status: 'status',

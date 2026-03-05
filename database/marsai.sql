@@ -56,9 +56,7 @@ CREATE TABLE IF NOT EXISTS `collaborator` (
 
 CREATE TABLE IF NOT EXISTS `event` (
     `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    `title` VARCHAR(100) NOT NULL,
     `slug` VARCHAR(100) NOT NULL UNIQUE,
-    `description` TEXT,
     `status` ENUM('draft', 'published', 'canceled'),
     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -67,8 +65,17 @@ CREATE TABLE IF NOT EXISTS `event` (
     `duration` INT,
     `location` VARCHAR(255),
     `is_bookable` BOOLEAN NOT NULL DEFAULT FALSE,
-    `capacity` INT NOT NULL CHECK (`capacity` > 0),
-    `lang` ENUM('FR', 'EN')
+    `capacity` INT CHECK (`capacity` > 0)
+);
+
+CREATE TABLE IF NOT EXISTS `event_translation` (
+    `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    `event_id` INT NOT NULL,
+    FOREIGN KEY (`event_id`) REFERENCES `event`(`id`) ON DELETE CASCADE,
+    `lang` ENUM('FR', 'EN') NOT NULL,
+    `title` VARCHAR(100) NOT NULL,
+    `description` TEXT,
+    UNIQUE KEY `uq_event_lang` (`event_id`, `lang`)
 );
 
 CREATE TABLE IF NOT EXISTS `tag` (

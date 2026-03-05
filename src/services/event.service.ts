@@ -3,7 +3,6 @@ import type { CreateEventRequest } from '../types/schemas/create-event-request.s
 import type { UpdateEventRequest } from '../types/schemas/update-event-request.schema.js';
 import type { Event } from '../types/interfaces/event.interface.js';
 import AppError from '../helpers/AppError.js';
-import bookingModel from '../models/booking.model.js';
 import { generateUniqueSlug } from '../helpers/string-utils.js';
 
 const create = async (body: CreateEventRequest): Promise<void> => {
@@ -15,41 +14,32 @@ const create = async (body: CreateEventRequest): Promise<void> => {
   }
   await eventModel.create(body);
 };
+
 const findAll = async (lang?: string): Promise<Event[]> => {
-  return await eventModel.findAll(lang);
+  return eventModel.findAll(lang);
 };
 
-const findById = async (id: number): Promise<Event> => {
-  const event = await eventModel.findById(id);
-  if (!event) {
-    throw new AppError(404, 'Event not found');
-  }
+const findById = async (id: number, lang?: string): Promise<Event> => {
+  const event = await eventModel.findById(id, lang);
+  if (!event) throw new AppError(404, 'Event not found');
   return event;
 };
 
-const findBySlug = async (slug: string): Promise<Event> => {
-  const event = await eventModel.findBySlug(slug);
-  if (!event) {
-    throw new AppError(404, 'Event not found');
-  }
+const findBySlug = async (slug: string, lang?: string): Promise<Event> => {
+  const event = await eventModel.findBySlug(slug, lang);
+  if (!event) throw new AppError(404, 'Event not found');
   return event;
 };
 
 const getRemainingSeats = async (id: number): Promise<number> => {
-  const event = await eventModel.findById(id);
-  if (!event) {
-    throw new AppError(404, 'Event not found');
-  }
-  const relatedIds = await eventModel.findRelatedIds(id);
-  const bookedSeats = await bookingModel.countByEventIds(relatedIds);
-  return event.capacity - bookedSeats;
+  const seats = await eventModel.getRemainingSeats(id);
+  if (seats === null) throw new AppError(404, 'Event not found');
+  return seats;
 };
 
 const remove = async (id: number): Promise<void> => {
   const affectedRows = await eventModel.remove(id);
-  if (affectedRows === 0) {
-    throw new AppError(404, 'Event not found');
-  }
+  if (affectedRows === 0) throw new AppError(404, 'Event not found');
 };
 
 const update = async (id: number, event: UpdateEventRequest): Promise<void> => {
@@ -60,9 +50,7 @@ const update = async (id: number, event: UpdateEventRequest): Promise<void> => {
     });
   }
   const affectedRows = await eventModel.update(id, event);
-  if (affectedRows === 0) {
-    throw new AppError(404, `Event not found`);
-  }
+  if (affectedRows === 0) throw new AppError(404, 'Event not found');
 };
 
 const eventService = {

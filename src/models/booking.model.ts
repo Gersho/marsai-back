@@ -25,18 +25,6 @@ const findByParticipantAndEvent = async (
   return rows[0] ?? null;
 };
 
-const findByParticipantAndEventIds = async (
-  participantId: number,
-  eventIds: number[],
-): Promise<Booking | null> => {
-  if (eventIds.length === 0) return null;
-  const [rows] = await db.query<Booking[]>(
-    'SELECT * FROM booking WHERE participant_id = ? AND event_id IN (?)',
-    [participantId, eventIds],
-  );
-  return rows[0] ?? null;
-};
-
 const remove = async (id: number): Promise<number> => {
   const [result] = await db.execute<ResultSetHeader>(
     'DELETE FROM booking WHERE id = ?',
@@ -53,22 +41,11 @@ const countByEventId = async (eventId: number): Promise<number> => {
   return rows[0]!.count;
 };
 
-const countByEventIds = async (eventIds: number[]): Promise<number> => {
-  if (eventIds.length === 0) return 0;
-  const [rows] = await db.query<CountRow[]>(
-    'SELECT COUNT(*) as count FROM booking WHERE event_id IN (?)',
-    [eventIds],
-  );
-  return rows[0]!.count;
-};
-
 const bookingModel = {
   create,
   findByParticipantAndEvent,
-  findByParticipantAndEventIds,
   remove,
   countByEventId,
-  countByEventIds,
 };
 
 export default bookingModel;

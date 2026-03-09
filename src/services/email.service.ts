@@ -130,6 +130,30 @@ const sendMailSubscribeEvent = async (
   );
 };
 
-const emailService = { sendMail, mailerJob, sendMailSubscribeEvent };
+const sendJuryInvites = async (invites: { email: string; token: string }[]) => {
+  const htmlTemplate = await loadHtmlFile('jury-invite');
+  const sendPromises = invites.map((invite) => {
+    const personalizedHtml = htmlTemplate.replace(
+      '{{INVITE_URL}}',
+      `${process.env.FRONT_IP}/invite/${invite.token}`,
+    );
+    return transporter.sendMail({
+      from: `MarsAi <${process.env.MAILER_EMAIL}>`,
+      to: invite.email,
+      subject: 'MairsAi jury invitation',
+      html: personalizedHtml,
+    });
+  });
+
+  const result = await Promise.allSettled(sendPromises);
+  console.info('Email sent: ' + result.length);
+};
+
+const emailService = {
+  sendMail,
+  mailerJob,
+  sendMailSubscribeEvent,
+  sendJuryInvites,
+};
 
 export default emailService;

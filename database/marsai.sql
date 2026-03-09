@@ -156,4 +156,9 @@ CREATE TABLE IF NOT EXISTS `rating` (
     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS `jury_invite` (
+    `email` VARCHAR(255) PRIMARY KEY NOT NULL,
+    `token` VARCHAR(255) NOT NULL
+);
+
 INSERT INTO `role` (`name`) VALUES ('admin'), ('jury');

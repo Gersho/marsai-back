@@ -3,7 +3,7 @@ import juryService from '../services/jury.service.js';
 
 const create: RequestHandler = async (req, res, next) => {
   try {
-    await juryService.addJuries(req.body);
+    await juryService.create(req.body);
     res.status(201).send();
   } catch (e) {
     next(e);
@@ -19,6 +19,6 @@ const findAll: RequestHandler = async (_req, res, next) => {
   }
 };
 
-const juryController = { create, findAll };
+const juryController = { findAll, create };
 
 export default juryController;

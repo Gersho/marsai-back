@@ -1,38 +1,25 @@
 import type { ResultSetHeader } from 'mysql2';
 import db from '../database/connection.js';
-import type User from '../types/interfaces/user.interface.js';
 import type Jury from '../types/interfaces/jury.interface.js';
 
-const create = async (juries: string[][]): Promise<number> => {
-  try {
-    await db.beginTransaction();
+const create = async (
+  jury: Omit<Jury, 'id'> & { password: string },
+): Promise<number> => {
+  const [res] = await db.query<ResultSetHeader>(
+    'INSERT INTO user (email, firstname, lastname, password) VALUES (?, ?, ?, ?)',
+    [jury.email, jury.firstname, jury.lastname, jury.password],
+  );
 
-    const [res] = await db.query<ResultSetHeader>(
-      'INSERT INTO user (email, firstname, lastname, password) VALUES ?',
-      [juries],
-    );
+  const juryRoleId = 2;
 
-    const emails = juries.map((j) => j[0] as string);
+  await db.query('INSERT INTO role_user (user_id, role_id) VALUES (?, ?)', [
+    res.insertId,
+    juryRoleId,
+  ]);
 
-    const [inserted] = await db.query<User[]>(
-      'SELECT id FROM user WHERE email IN (?)',
-      [emails],
-    );
+  await db.commit();
 
-    const juryRoleId = 2;
-    const userRoleToInsert = inserted.map((user) => [user.id, juryRoleId]);
-
-    await db.query('INSERT INTO role_user (user_id, role_id) VALUES ?', [
-      userRoleToInsert,
-    ]);
-
-    await db.commit();
-
-    return res.insertId;
-  } catch (e) {
-    await db.rollback();
-    throw e;
-  }
+  return res.insertId;
 };
 
 const findAll = async (): Promise<Jury[]> => {
@@ -49,5 +36,16 @@ const findById = async (juryId: number): Promise<Jury | null> => {
   return result[0] ?? null;
 };
 
-const juryModel = { create, findAll, findById };
+const findInEmails = async (juries: { email: string }[]): Promise<Jury[]> => {
+  const emails = juries.map((j) => j.email);
+
+  const [res] = await db.query(
+    'SELECT id, email FROM user WHERE email IN (?)',
+    [emails],
+  );
+
+  return res as Jury[];
+};
+
+const juryModel = { create, findAll, findById, findInEmails };
 export default juryModel;

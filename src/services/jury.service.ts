@@ -1,43 +1,40 @@
+import db from '../database/connection.js';
 import AppError from '../helpers/AppError.js';
-import { isMysqlError } from '../helpers/is-mysql-error.js';
-import { generateRandomString } from '../helpers/string-utils.js';
+import juryInviteModel from '../models/jury-invite.model.js';
 import juryModel from '../models/jury.model.js';
 import type Jury from '../types/interfaces/jury.interface.js';
 import type { CreateJury } from '../types/schemas/create-jury.schema.js';
-import authService from './auth.service.js';
-
-const addJuries = async (juryRequest: CreateJury): Promise<number> => {
-  try {
-    const juries = juryRequest.juries;
-    const juriesWithPass = await Promise.all(
-      juries.map(async (jury) => {
-        const password = generateRandomString(20);
-        const hash = await authService.hashPassword(password);
-
-        return [jury.email, jury.firstname, jury.lastname, hash];
-      }),
-    );
-    return await juryModel.create(juriesWithPass);
-  } catch (err) {
-    if (isMysqlError(err) && err.errno === 1062) {
-      const regex = /'([^']+)'/;
-      const match = err.sqlMessage.match(regex);
-      let email = '';
-      if (match) {
-        email = match[1] ?? '';
-      }
-      throw new AppError(409, 'Email already used', {
-        field: 'email',
-        value: email,
-      });
-    }
-    throw err;
-  }
-};
+import bcrypt from 'bcrypt';
 
 const findAll = async (): Promise<Jury[]> => {
   return await juryModel.findAll();
 };
 
-const juryService = { addJuries, findAll };
+const create = async (body: CreateJury): Promise<void> => {
+  const invite = await juryInviteModel.findByToken(body.token);
+
+  if (!invite) {
+    throw new AppError(404, 'Invitation not found');
+  }
+
+  try {
+    await db.beginTransaction();
+    const hashedPass = await bcrypt.hash(body.password, 10);
+    const newJury = {
+      email: invite.email,
+      firstname: body.firstname,
+      lastname: body.lastname,
+      password: hashedPass,
+    };
+    await juryModel.create(newJury);
+    await juryInviteModel.deleteByEmail(newJury.email);
+    await db.commit();
+  } catch (e) {
+    await db.rollback();
+    throw e;
+  }
+};
+
+const juryService = { findAll, create };
+
 export default juryService;

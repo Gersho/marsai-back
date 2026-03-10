@@ -151,7 +151,7 @@ const movieController = {
   update,
   ratingsPost,
   getAllSorted,
-  adminUpdate
+  adminUpdate,
 };
 
 export default movieController;

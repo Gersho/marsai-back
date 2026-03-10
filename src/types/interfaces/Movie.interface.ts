@@ -23,4 +23,4 @@ export default interface Movie extends RowDataPacket {
   collaborators: Collaborator[];
 }
 
-export type MovieWithDirector = Movie & {director: Director};
+export type MovieWithDirector = Movie & { director: Director };

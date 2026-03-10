@@ -128,4 +128,6 @@ export const MovieRequestSchema = z
 
 export type MovieRequest = z.infer<typeof MovieRequestSchema>;
 
-export type AdminMovieRequest = MovieRequest & {adminData: { adminText: string, adminStatus: string }}
+export type AdminMovieRequest = MovieRequest & {
+  adminData: { adminText: string; adminStatus: string };
+};

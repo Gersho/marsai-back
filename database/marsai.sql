@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `movie` (
     `creative_process` TEXT NOT NULL,
     `ai_tools` TEXT NOT NULL,
     `has_subs` BOOLEAN NOT NULL,
-    `status` ENUM('draft','published','archived') NOT NULL DEFAULT 'draft'
+    `status` ENUM('pending_review', 'pending_change', 'accepted', 'selected', 'winner', 'rejected') NOT NULL DEFAULT 'pending_review'
 );
 
 CREATE TABLE IF NOT EXISTS `collaborator` (
@@ -154,6 +154,12 @@ CREATE TABLE IF NOT EXISTS `rating` (
     FOREIGN KEY (`movie_id`) REFERENCES `movie`(`id`) ON DELETE CASCADE,
     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS `movie_update` (
+    `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    FOREIGN KEY (`movie_id`) REFERENCES `movie`(`id`) ON DELETE CASCADE,
+    `token` VARCHAR(255) NOT NULL
 );
 
 INSERT INTO `role` (`name`) VALUES ('admin'), ('jury');

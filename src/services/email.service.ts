@@ -8,6 +8,7 @@ import type SMTPTransport from 'nodemailer/lib/smtp-transport/index.js';
 import path from 'path';
 import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
+import type { MovieWithDirector } from '../types/interfaces/Movie.interface.js';
 
 let transporter: nodemailer.Transporter<
   SMTPTransport.SentMessageInfo,
@@ -130,6 +131,19 @@ const sendMailSubscribeEvent = async (
   );
 };
 
-const emailService = { sendMail, mailerJob, sendMailSubscribeEvent };
+const statusUpdateMail = async (
+  adminData: { adminText: string, adminStatus: string },
+  movie: MovieWithDirector
+): Promise<void> => {
+  await transporter.sendMail({
+    from: `MarsAi <${process.env.MAILER_EMAIL}>`,
+    to: movie.director.email,
+    subject: `update on your movie submission: ${movie.english_title}`,
+    html:`Hello ${movie.director.firstname} ${movie.director.lastname}, your Movie ${movie.english_title} has been updated to status ${adminData.adminStatus} along with the following message ${adminData.adminText}`
+  })
+  console.info(`sent email to ${movie.director.email} about movie ${movie.id}`);
+}
+
+const emailService = { sendMail, mailerJob, sendMailSubscribeEvent, statusUpdateMail };
 
 export default emailService;

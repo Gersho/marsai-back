@@ -1,6 +1,6 @@
 import type { RowDataPacket } from 'mysql2';
 import type { Languages } from '../enums/languages.enum.js';
-import type { Collaborator } from '../schemas/MovieRequest.schema.js';
+import type { Collaborator, Director } from '../schemas/MovieRequest.schema.js';
 
 export default interface Movie extends RowDataPacket {
   id?: number;
@@ -22,3 +22,5 @@ export default interface Movie extends RowDataPacket {
   status: 'draft' | 'published' | 'archived';
   collaborators: Collaborator[];
 }
+
+export type MovieWithDirector = Movie & {director: Director};

@@ -6,6 +6,7 @@ import type Rate from '../types/interfaces/rate.interface.js';
 import type { MovieFindAllResponse } from '../types/interfaces/MovieFindAllResponse.interface.js';
 import type { MovieCount } from '../types/interfaces/MovieFindAllResponse.interface.js';
 import { toSnakeCase } from '../helpers/string-utils.js';
+import type { MovieWithDirector } from '../types/interfaces/Movie.interface.js';
 
 const create = async (newMovie: MovieRequest): Promise<number> => {
   const sql = `
@@ -67,7 +68,7 @@ const getAll = async (
   return { total: resCount, data } as MovieFindAllResponse;
 };
 
-const getById = async (id: number): Promise<Movie | null> => {
+const getById = async (id: number): Promise<MovieWithDirector | null> => {
   const sql =
     'SELECT m.*, \
     JSON_OBJECT( \
@@ -104,8 +105,8 @@ const getById = async (id: number): Promise<Movie | null> => {
     WHERE m.id = ? \
     GROUP BY dir.id';
 
-  const [result] = await db.query<Movie[]>(sql, [id]);
-  const movie = (result[0] as Movie) ?? null;
+  const [result] = await db.query<MovieWithDirector[]>(sql, [id]);
+  const movie = (result[0] as MovieWithDirector) ?? null;
   if (movie && movie.collaborators[0]?.email === null) {
     movie.collaborators = [];
   }
@@ -193,7 +194,6 @@ const getAllSorted = async (
   search: string,
 ): Promise<MovieFindAllResponse> => {
   const offset: number = (page - 1) * 20;
-  console.info('sort: ' + sort);
 
   const sqlCount = `SELECT COUNT(m.id) AS total \
                     FROM movie m \

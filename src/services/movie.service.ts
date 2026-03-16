@@ -1,6 +1,9 @@
 import type MovieResponse from '../types/interfaces/MovieResponse.interface.js';
 import movieModel from '../models/movie.model.js';
-import type { MovieRequest } from '../types/schemas/MovieRequest.schema.js';
+import type {
+  AdminMovieRequest,
+  MovieRequest,
+} from '../types/schemas/MovieRequest.schema.js';
 import { generateUniqueSlug } from '../helpers/string-utils.js';
 import type Movie from '../types/interfaces/Movie.interface.js';
 import db from '../database/connection.js';
@@ -9,6 +12,7 @@ import imageModel from '../models/image.model.js';
 import AppError from '../helpers/AppError.js';
 import type { RatingRequest } from '../types/schemas/rating-request.schema.js';
 import type { MovieFindAllResponse } from '../types/interfaces/MovieFindAllResponse.interface.js';
+import emailService from './email.service.js';
 
 const create = async (movieRequest: MovieRequest): Promise<MovieResponse> => {
   try {
@@ -130,6 +134,24 @@ const getAllSorted = async (
   return await movieModel.getAllSorted(page, sort, order, onlyDrafts, search);
 };
 
+const adminUpdate = async (
+  id: number,
+  movieRequest: AdminMovieRequest,
+): Promise<number> => {
+  const { adminData, ...request } = movieRequest;
+  const movie = await movieModel.getById(id);
+  if (!movie) throw new AppError(404, 'film not found');
+  console.info(movie);
+  await emailService.statusUpdateMail(adminData, movie);
+  console.info(adminData);
+  //TODO add transaction
+  const affectedRows = await movieModel.update(id, request);
+  if (affectedRows === 0) {
+    throw new AppError(404, `movie not found`);
+  }
+  return affectedRows;
+};
+
 const movieService = {
   create,
   ratingPost,
@@ -139,6 +161,7 @@ const movieService = {
   remove,
   update,
   getAllSorted,
+  adminUpdate,
 };
 
 export default movieService;

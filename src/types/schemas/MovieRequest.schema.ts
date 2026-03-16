@@ -90,8 +90,8 @@ export const MovieRequestSchema = z
     language: z.enum(Languages),
     originalSynopsis: z.string().min(1).max(300),
     englishSynopsis: z.string().min(1).max(300),
-    creativeProcess: z.string().min(1).max(300),
-    aiTools: z.string().min(1).max(300),
+    creativeProcess: z.string().min(1).max(500),
+    aiTools: z.string().min(1).max(500),
     hasSubs: z
       .enum(['true', 'false'])
       .transform((v) => (v === 'true' ? true : false)),
@@ -127,3 +127,7 @@ export const MovieRequestSchema = z
   });
 
 export type MovieRequest = z.infer<typeof MovieRequestSchema>;
+
+export type AdminMovieRequest = MovieRequest & {
+  adminData: { adminText: string; adminStatus: string };
+};

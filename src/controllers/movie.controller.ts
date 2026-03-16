@@ -100,12 +100,7 @@ const getAllSorted: RequestHandler = async (req, res, next) => {
   try {
     const { page, sort, order, onlyDrafts, search } = req.query;
     const pageAsInt = parseInt(page as string);
-    console.info('in contro');
-    console.info('page: ' + page);
-    console.info('sort: ' + sort);
-    console.info('order: ' + order);
-    console.info('onlyDrafts: ' + onlyDrafts);
-    console.info('search: ' + search);
+
     if (
       isNaN(pageAsInt) ||
       pageAsInt <= 0 ||
@@ -113,6 +108,7 @@ const getAllSorted: RequestHandler = async (req, res, next) => {
       ((sort as string) !== 'id' &&
         (sort as string) !== 'english_title' &&
         (sort as string) !== 'submitted_at' &&
+        (sort as string) !== 'c.lastname' &&
         (sort as string) !== 'status') ||
       ((onlyDrafts as string) !== 'true' && (onlyDrafts as string) !== 'false')
     ) {
@@ -132,6 +128,20 @@ const getAllSorted: RequestHandler = async (req, res, next) => {
   }
 };
 
+const adminUpdate: RequestHandler = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const response = await movieService.adminUpdate(
+      parseInt(id as string),
+      req.body,
+    );
+    return res.status(200).send(response);
+  } catch (e) {
+    next(e);
+  }
+};
+
 const movieController = {
   getAll,
   getById,
@@ -141,6 +151,7 @@ const movieController = {
   update,
   ratingsPost,
   getAllSorted,
+  adminUpdate,
 };
 
 export default movieController;

@@ -22,7 +22,9 @@ movieRouter.post(
   movieController.ratingsPost,
 );
 movieRouter.delete('/:id', movieController.remove);
-movieRouter.put('/:id', isLogged, isAdmin, movieController.update);
+//TODO new route for PUT by director
+//movieRouter.put('/:id', isLogged, isAdmin, movieController.update);
+movieRouter.put('/:id', isLogged, isAdmin, movieController.adminUpdate);
 movieRouter.get('/:slug', movieController.getBySlug);
 
 export default movieRouter;

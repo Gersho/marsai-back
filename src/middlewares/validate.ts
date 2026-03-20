@@ -8,8 +8,8 @@ export const validate =
     try {
       const dataToValidate: Record<string, unknown> = {
         ...(req.body as Record<string, unknown>),
-        videoUrl: req.uploadedFiles?.video,
-        coverUrl: req.uploadedFiles?.coverImage,
+        videoPath: req.uploadedFiles?.video,
+        coverPath: req.uploadedFiles?.coverImage,
         stillsUrls: [
           req.uploadedFiles?.stillImageA,
           req.uploadedFiles?.stillImageB,

@@ -3,9 +3,9 @@ import ratingService from '../services/rating.service.js';
 
 const rateMovie: RequestHandler = async (req, res, next) => {
   try {
-    const { slug } = req.params;
+    const { id } = req.params;
     const userId = req.user_id;
-    await ratingService.rateMovieBySlug(slug as string, userId, req.body);
+    await ratingService.rateMovieById(Number(id), userId, req.body);
     return res.status(201).json({ message: 'Rating submitted successfully' });
   } catch (e) {
     next(e);
@@ -14,8 +14,8 @@ const rateMovie: RequestHandler = async (req, res, next) => {
 
 const getRatings: RequestHandler = async (req, res, next) => {
   try {
-    const { slug } = req.params;
-    const ratings = await ratingService.getRatingsByMovieSlug(slug as string);
+    const { id } = req.params;
+    const ratings = await ratingService.getRatingsByMovieId(Number(id));
     return res.status(200).json(ratings);
   } catch (e) {
     next(e);

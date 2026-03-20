@@ -4,12 +4,12 @@ import AppError from '../helpers/AppError.js';
 import type { RatingRequest } from '../types/schemas/rating-request.schema.js';
 import type Rate from '../types/interfaces/rate.interface.js';
 
-const rateMovieBySlug = async (
-  slug: string,
+const rateMovieById = async (
+  id: number,
   userId: number,
   ratingRequest: RatingRequest,
 ): Promise<void> => {
-  const movie = await movieModel.getBySlug(slug);
+  const movie = await movieModel.getById(id);
   if (!movie) {
     throw new AppError(404, 'Movie not found');
   }
@@ -36,8 +36,8 @@ const rateMovieBySlug = async (
   }
 };
 
-const getRatingsByMovieSlug = async (slug: string): Promise<Rate[]> => {
-  const movie = await movieModel.getBySlug(slug);
+const getRatingsByMovieId = async (id: number): Promise<Rate[]> => {
+  const movie = await movieModel.getById(id);
   if (!movie) {
     throw new AppError(404, 'Movie not found');
   }
@@ -46,8 +46,8 @@ const getRatingsByMovieSlug = async (slug: string): Promise<Rate[]> => {
 };
 
 const ratingService = {
-  rateMovieBySlug,
-  getRatingsByMovieSlug,
+  rateMovieById,
+  getRatingsByMovieId,
 };
 
 export default ratingService;

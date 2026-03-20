@@ -21,14 +21,14 @@ movieRouter.post(
 );
 
 movieRouter.post(
-  '/:slug/ratings',
+  '/:id/ratings',
   isLogged,
   isJury,
   validate(RatingRequestSchema),
   ratingController.rateMovie,
 );
 
-movieRouter.get('/:slug/ratings', ratingController.getRatings);
+movieRouter.get('/:id/ratings', ratingController.getRatings);
 
 movieRouter.delete('/:id', movieController.remove);
 //TODO new route for PUT by director

@@ -11,6 +11,7 @@ import cookieParser from 'cookie-parser';
 import bookingRouter from './routes/booking.routes.js';
 import juryRouter from './routes/jury.routes.js';
 import juryInviteRouter from './routes/jury-invite.route.js';
+import movieUpdateRouter from './routes/movie-update.routes.js';
 
 const app = express();
 const IP = process.env.IP;
@@ -34,6 +35,7 @@ app.use('/subscribers', subscriberRouter);
 app.use('/bookings', bookingRouter);
 app.use('/juries', juryRouter);
 app.use('/jury-invites', juryInviteRouter);
+app.use('/movie-update', movieUpdateRouter);
 
 app.use(errorHandler);
 app.use('/uploads', express.static('uploads'));

@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      .container {
+        font-family: sans-serif;
+        padding: 20px;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Hello from MarsAi!</h1>
+
+      <div>
+        Hello {{DIRECTOR_FIRSTNAME}} {{DIRECTOR_LASTNAME}}, your Movie
+        {{MOVIE_ENGLISH_TITLE}} has been rejected.
+      </div>
+
+      <div>
+        The administrator has left the following message about your submission:
+      </div>
+      <div>{{ADMIN_MESSAGE}}</div>
+    </div>
+  </body>
+</html>

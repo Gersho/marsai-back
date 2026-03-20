@@ -166,12 +166,11 @@ const createRate = async (
 const update = async (id: number, movie: MovieRequest): Promise<number> => {
   const fields: string[] = [];
   const values: (string | number | Date | boolean)[] = [];
-
+console.info(movie);
   for (const [key, value] of Object.entries(movie)) {
     fields.push(`${toSnakeCase(key)} = ?`);
     values.push(value as string | number | Date | boolean);
   }
-
   if (fields.length === 0) {
     return 0; // No fields to update
   }

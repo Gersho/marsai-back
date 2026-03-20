@@ -5,6 +5,7 @@ import AppError from '../helpers/AppError.js';
 
 const create: RequestHandler = async (req, res, next) => {
   try {
+    console.info(req.body);
     const response = await movieService.create(req.body);
     return res.status(201).send(response);
   } catch (e) {
@@ -84,8 +85,8 @@ const getBySlug: RequestHandler = async (req, res, next) => {
 
 const update: RequestHandler = async (req, res, next) => {
   try {
+    // console.info(req.body);
     const { id } = req.params;
-
     const response = await movieService.update(
       parseInt(id as string),
       req.body,

@@ -78,11 +78,12 @@ const VideoUrlField = VideoFileSchema.transform((file) => file.location);
 
 export const MovieRequestSchema = z
   .object({
+    token: z.string().nonempty().optional(),
     originalTitle: z.string().min(1).max(255),
     englishTitle: z.string().min(1).max(255),
     slug: z.string().optional(),
-    videoUrl: VideoUrlField,
-    coverUrl: ImageUrlField,
+    videoPath: VideoUrlField,
+    coverPath: ImageUrlField,
     stillsUrls: z.array(ImageUrlField).default([]),
     isHybrid: z
       .enum(['true', 'false'])
@@ -101,7 +102,7 @@ export const MovieRequestSchema = z
   .transform(async (data, ctx) => {
     try {
       const duration = await getVideoDurationInSeconds(
-        data.videoUrl,
+        data.videoPath,
         '/usr/bin/ffprobe',
       );
 
@@ -109,7 +110,7 @@ export const MovieRequestSchema = z
         ctx.addIssue({
           code: 'custom',
           message: 'Video cannot be longer than 90 seconds.',
-          path: ['videoUrl'],
+          path: ['videoPath'],
         });
         return z.NEVER;
       }
@@ -120,7 +121,7 @@ export const MovieRequestSchema = z
       ctx.addIssue({
         code: 'custom',
         message: 'Could not verify video duration.',
-        path: ['videoUrl'],
+        path: ['videoPath'],
       });
       return z.NEVER;
     }

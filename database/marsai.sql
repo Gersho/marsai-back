@@ -163,6 +163,7 @@ CREATE TABLE IF NOT EXISTS `jury_invite` (
 
 CREATE TABLE IF NOT EXISTS `movie_update` (
     `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    `movie_id` INT NOT NULL,
     FOREIGN KEY (`movie_id`) REFERENCES `movie`(`id`) ON DELETE CASCADE,
     `token` VARCHAR(255) NOT NULL
 );

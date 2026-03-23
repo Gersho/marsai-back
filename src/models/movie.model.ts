@@ -12,7 +12,7 @@ const create = async (newMovie: MovieRequest): Promise<number> => {
   INSERT INTO movie 
   (original_title, english_title, slug, cover_path, duration, is_hybrid, language, original_synopsis, english_synopsis, creative_process, ai_tools, has_subs, video_path) 
   VALUES 
-  (:originalTitle, :englishTitle, :slug, :coverUrl, :duration, :isHybrid, :language, :originalSynopsis, :englishSynopsis, :creativeProcess, :aiTools, :hasSubs, :videoUrl)
+  (:originalTitle, :englishTitle, :slug, :coverPath, :duration, :isHybrid, :language, :originalSynopsis, :englishSynopsis, :creativeProcess, :aiTools, :hasSubs, :videoPath)
   `;
   const [result] = await db.execute<ResultSetHeader>(sql, newMovie);
 
@@ -130,11 +130,12 @@ const update = async (id: number, movie: MovieRequest): Promise<number> => {
   const fields: string[] = [];
   const values: (string | number | Date | boolean)[] = [];
 
-  for (const [key, value] of Object.entries(movie)) {
+  const { token, stillsUrls, director, collaborators, ...movieCleaned } = movie;
+  console.info(token, stillsUrls, director, collaborators);
+  for (const [key, value] of Object.entries(movieCleaned)) {
     fields.push(`${toSnakeCase(key)} = ?`);
     values.push(value as string | number | Date | boolean);
   }
-
   if (fields.length === 0) {
     return 0; // No fields to update
   }

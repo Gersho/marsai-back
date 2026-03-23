@@ -12,6 +12,7 @@ import imageModel from '../models/image.model.js';
 import AppError from '../helpers/AppError.js';
 import type { MovieFindAllResponse } from '../types/interfaces/MovieFindAllResponse.interface.js';
 import emailService from './email.service.js';
+import movieUpdateModel from '../models/movie_update.model.js';
 
 const create = async (movieRequest: MovieRequest): Promise<MovieResponse> => {
   try {
@@ -94,6 +95,8 @@ const update = async (
   const affectedRows = await movieModel.update(id, movieRequest);
   if (affectedRows === 0) {
     throw new AppError(404, `movie not found`);
+  } else {
+    await movieUpdateModel.deleteByToken(movieRequest.token as string);
   }
   return affectedRows;
 };
@@ -115,9 +118,23 @@ const adminUpdate = async (
   const { adminData, ...request } = movieRequest;
   const movie = await movieModel.getById(id);
   if (!movie) throw new AppError(404, 'film not found');
-  console.info(movie);
-  await emailService.statusUpdateMail(adminData, movie);
-  console.info(adminData);
+  switch (adminData.adminStatus) {
+    case 'pending_change': {
+      const token = crypto.randomUUID() as string;
+      await emailService.statusUpdatePendingMail(adminData, movie, token);
+      await movieUpdateModel.create(movie.id!, token);
+      break;
+    }
+    case 'rejected':
+    case 'accepted':
+    case 'selected':
+    case 'winner':
+      await emailService.statusUpdateMail(adminData, movie);
+      break;
+    default:
+      throw new AppError(400, `wrong movie status`);
+  }
+
   //TODO add transaction
   const affectedRows = await movieModel.update(id, request);
   if (affectedRows === 0) {

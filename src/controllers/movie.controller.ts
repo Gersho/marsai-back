@@ -2,9 +2,12 @@ import type { RequestHandler } from 'express';
 import movieService from '../services/movie.service.js';
 import { removeUploads } from '../helpers/remove-uploads.js';
 import AppError from '../helpers/AppError.js';
+import type { MovieRequest } from '../types/schemas/MovieRequest.schema.js';
+import movieUpdateService from '../services/movie-update.service.js';
 
 const create: RequestHandler = async (req, res, next) => {
   try {
+    console.info(req.body);
     const response = await movieService.create(req.body);
     return res.status(201).send(response);
   } catch (e) {
@@ -74,12 +77,19 @@ const getBySlug: RequestHandler = async (req, res, next) => {
 
 const update: RequestHandler = async (req, res, next) => {
   try {
+    const token = (req.body as MovieRequest).token;
+    if (token === undefined) {
+      throw new AppError(400, 'Token missing from request');
+    }
+    const movieId = (await movieUpdateService.getByToken(token))
+      .movie_id as number;
     const { id } = req.params;
+    const idAsInt = parseInt(id as string);
+    if (movieId !== idAsInt) {
+      throw new AppError(400, 'Invalid Token');
+    }
 
-    const response = await movieService.update(
-      parseInt(id as string),
-      req.body,
-    );
+    const response = await movieService.update(idAsInt, req.body);
     return res.status(200).send(response);
   } catch (e) {
     next(e);

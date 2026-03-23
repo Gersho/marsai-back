@@ -31,9 +31,15 @@ movieRouter.post(
 movieRouter.get('/:id/ratings', ratingController.getRatings);
 
 movieRouter.delete('/:id', movieController.remove);
-//TODO new route for PUT by director
-//movieRouter.put('/:id', isLogged, isAdmin, movieController.update);
 movieRouter.put('/:id', isLogged, isAdmin, movieController.adminUpdate);
 movieRouter.get('/:slug', movieController.getBySlug);
+//TODO new route for PUT by director
+movieRouter.post(
+  '/edit/:id',
+  upload,
+  validate(MovieRequestSchema),
+  movieController.update,
+);
+movieRouter.get('/id/:id', movieController.getById);
 
 export default movieRouter;

@@ -129,8 +129,9 @@ const remove = async (id: number): Promise<number> => {
 const update = async (id: number, movie: MovieRequest): Promise<number> => {
   const fields: string[] = [];
   const values: (string | number | Date | boolean)[] = [];
-// console.info(movie);
-  const { token, stillsUrls, director, collaborators, ...movieCleaned} = movie;
+
+  const { token, stillsUrls, director, collaborators, ...movieCleaned } = movie;
+  console.info(token, stillsUrls, director, collaborators);
   for (const [key, value] of Object.entries(movieCleaned)) {
     fields.push(`${toSnakeCase(key)} = ?`);
     values.push(value as string | number | Date | boolean);

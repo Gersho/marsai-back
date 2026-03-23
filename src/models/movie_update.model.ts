@@ -1,11 +1,11 @@
-import type { ResultSetHeader } from "mysql2";
-import db from "../database/connection.js";
-import type MovieUpdate from "../types/interfaces/movie-update.interface.js";
+import type { ResultSetHeader } from 'mysql2';
+import db from '../database/connection.js';
+import type MovieUpdate from '../types/interfaces/movie-update.interface.js';
 
 const create = async (movieId: number, token: string): Promise<number> => {
-    const sql = `INSERT INTO movie_update (movie_id, token) VALUES (?, ?)`;
-    const [res] = await db.query<ResultSetHeader>(sql, [movieId, token]);
-    return res.insertId;
+  const sql = `INSERT INTO movie_update (movie_id, token) VALUES (?, ?)`;
+  const [res] = await db.query<ResultSetHeader>(sql, [movieId, token]);
+  return res.insertId;
 };
 
 const findByToken = async (token: string): Promise<MovieUpdate | null> => {
@@ -24,6 +24,6 @@ const deleteByToken = async (token: string): Promise<number> => {
   return res.affectedRows;
 };
 
-const movieUpdateModel = { create, findByToken, deleteByToken }
+const movieUpdateModel = { create, findByToken, deleteByToken };
 
 export default movieUpdateModel;

@@ -153,43 +153,41 @@ const sendJuryInvites = async (invites: { email: string; token: string }[]) => {
 const statusUpdatePendingMail = async (
   adminData: { adminText: string; adminStatus: string },
   movie: MovieWithDirector,
-  token: string
+  token: string,
 ): Promise<void> => {
   const htmlTemplate = await loadHtmlFile('movie-update-pending');
   const personalizedHtml = htmlTemplate
-      .replace('{{DIRECTOR_FIRSTNAME}}', movie.director.firstname)
-      .replace('{{DIRECTOR_LASTNAME}}', movie.director.lastname)
-      .replace('{{MOVIE_ENGLISH_TITLE}}', movie.english_title)
-      .replace('{{ADMIN_MESSAGE}}', adminData.adminText)
-      .replace(
-        '{{FORM_EDIT_URL}}',
-        `${process.env.FRONT_IP}/submit/${token}`,
-      );
+    .replace('{{DIRECTOR_FIRSTNAME}}', movie.director.firstname)
+    .replace('{{DIRECTOR_LASTNAME}}', movie.director.lastname)
+    .replace('{{MOVIE_ENGLISH_TITLE}}', movie.english_title)
+    .replace('{{ADMIN_MESSAGE}}', adminData.adminText)
+    .replace('{{FORM_EDIT_URL}}', `${process.env.FRONT_IP}/submit/${token}`);
   await transporter.sendMail({
     from: `MarsAi <${process.env.MAILER_EMAIL}>`,
     to: movie.director.email,
     subject: `Status update on your movie submission: ${movie.english_title}`,
-    html: personalizedHtml
+    html: personalizedHtml,
   });
   console.info(`sent email to ${movie.director.email} about movie ${movie.id}`);
 };
-
 
 const statusUpdateMail = async (
   adminData: { adminText: string; adminStatus: string },
   movie: MovieWithDirector,
 ): Promise<void> => {
-  const htmlTemplate = await loadHtmlFile(`movie-update-${adminData.adminStatus}`);
+  const htmlTemplate = await loadHtmlFile(
+    `movie-update-${adminData.adminStatus}`,
+  );
   const personalizedHtml = htmlTemplate
-      .replace('{{DIRECTOR_FIRSTNAME}}', movie.director.firstname)
-      .replace('{{DIRECTOR_LASTNAME}}', movie.director.lastname)
-      .replace('{{MOVIE_ENGLISH_TITLE}}', movie.english_title)
-      .replace('{{ADMIN_MESSAGE}}', adminData.adminText);
+    .replace('{{DIRECTOR_FIRSTNAME}}', movie.director.firstname)
+    .replace('{{DIRECTOR_LASTNAME}}', movie.director.lastname)
+    .replace('{{MOVIE_ENGLISH_TITLE}}', movie.english_title)
+    .replace('{{ADMIN_MESSAGE}}', adminData.adminText);
   await transporter.sendMail({
     from: `MarsAi <${process.env.MAILER_EMAIL}>`,
     to: movie.director.email,
     subject: `Status update on your movie submission: ${movie.english_title}`,
-    html: personalizedHtml
+    html: personalizedHtml,
   });
   console.info(`sent email to ${movie.director.email} about movie ${movie.id}`);
 };
@@ -200,7 +198,7 @@ const emailService = {
   sendMailSubscribeEvent,
   statusUpdateMail,
   sendJuryInvites,
-  statusUpdatePendingMail
+  statusUpdatePendingMail,
 };
 
 export default emailService;

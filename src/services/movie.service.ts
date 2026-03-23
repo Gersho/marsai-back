@@ -95,9 +95,8 @@ const update = async (
   const affectedRows = await movieModel.update(id, movieRequest);
   if (affectedRows === 0) {
     throw new AppError(404, `movie not found`);
-  }
-  else{
-    await movieUpdateModel.deleteByToken(movieRequest.token as string)
+  } else {
+    await movieUpdateModel.deleteByToken(movieRequest.token as string);
   }
   return affectedRows;
 };
@@ -119,18 +118,17 @@ const adminUpdate = async (
   const { adminData, ...request } = movieRequest;
   const movie = await movieModel.getById(id);
   if (!movie) throw new AppError(404, 'film not found');
-  switch(adminData.adminStatus){
-    case "pending_change":
-    {
+  switch (adminData.adminStatus) {
+    case 'pending_change': {
       const token = crypto.randomUUID() as string;
-      await emailService.statusUpdatePendingMail(adminData, movie, token);  
+      await emailService.statusUpdatePendingMail(adminData, movie, token);
       await movieUpdateModel.create(movie.id!, token);
       break;
     }
-    case "rejected":
-    case "accepted":
-    case "selected":
-    case "winner":
+    case 'rejected':
+    case 'accepted':
+    case 'selected':
+    case 'winner':
       await emailService.statusUpdateMail(adminData, movie);
       break;
     default:
@@ -157,83 +155,3 @@ const movieService = {
 };
 
 export default movieService;
-
-
-//in movie controller
-// {
-//  token: "cldl"
-//   originalTitle: 'WedsadweqeqwQQQQQQQ',
-//   englishTitle: 'Traduction anglaise',
-//   videoPath: 'https://s3.fr-par.scw.cloud/lyn/jakah/video/55178626-9865-4450-97ee-0d742b554f8c.mp4',
-//   coverPath: 'https://s3.fr-par.scw.cloud/lyn/jakah/coverImage/6991c5df-3d30-4359-aae9-dbe6460feb4f.png',
-//   stillsUrls: [],
-//   isHybrid: false,
-//   language: 'DE',
-//   originalSynopsis: 'Synopsis langue originale',
-//   englishSynopsis: 'Synopsis anglais',
-//   creativeProcess: 'Méthodologie créative',
-//   aiTools: 'Stack technologique',
-//   hasSubs: false,
-//   director: {
-//     firstname: 'Mme prenom',
-//     lastname: 'nom',
-//     gender: 'mr',
-//     email: 'email@gmail.com',
-//     job: 'metier actuel',
-//     address: 'Adresse',
-//     zipcode: 'Code postal',
-//     city: 'Ville',
-//     region: 'Région',
-//     country: 'Pays ',
-//     phone: '010101020203',
-//     birthdate: '1111-11-11',
-//     facebookUrl: 'Facebook',
-//     instagramUrl: 'Instagram',
-//     youtubeUrl: 'YouTube',
-//     twitterUrl: 'Twitter',
-//     linkedinUrl: 'LinkedIn'
-//   },
-//   collaborators: [],
-//   duration: 24.2
-// }
-
-
-
-//in movie model
-// {
-//    token: "djflksj"
-//   originalTitle: 'WedsadweqeqwQQQQQQQ',
-//   englishTitle: 'Traduction anglaise',
-//   videoPath: 'https://s3.fr-par.scw.cloud/lyn/jakah/video/55178626-9865-4450-97ee-0d742b554f8c.mp4',
-//   coverPath: 'https://s3.fr-par.scw.cloud/lyn/jakah/coverImage/6991c5df-3d30-4359-aae9-dbe6460feb4f.png',
-//   stillsUrls: [],
-//   isHybrid: false,
-//   language: 'DE',
-//   originalSynopsis: 'Synopsis langue originale',
-//   englishSynopsis: 'Synopsis anglais',
-//   creativeProcess: 'Méthodologie créative',
-//   aiTools: 'Stack technologique',
-//   hasSubs: false,
-//   director: {
-//     firstname: 'Mme prenom',
-//     lastname: 'nom',
-//     gender: 'mr',
-//     email: 'email@gmail.com',
-//     job: 'metier actuel',
-//     address: 'Adresse',
-//     zipcode: 'Code postal',
-//     city: 'Ville',
-//     region: 'Région',
-//     country: 'Pays ',
-//     phone: '010101020203',
-//     birthdate: '1111-11-11',
-//     facebookUrl: 'Facebook',
-//     instagramUrl: 'Instagram',
-//     youtubeUrl: 'YouTube',
-//     twitterUrl: 'Twitter',
-//     linkedinUrl: 'LinkedIn'
-//   },
-//   collaborators: [],
-//   duration: 24.2,
-//   slug: 'wedsadweqeqwqqqqqqq'
-// }

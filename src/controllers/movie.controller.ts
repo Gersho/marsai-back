@@ -81,17 +81,15 @@ const update: RequestHandler = async (req, res, next) => {
     if (token === undefined) {
       throw new AppError(400, 'Token missing from request');
     }
-    const movieId = (await movieUpdateService.getByToken(token)).movie_id as number;
+    const movieId = (await movieUpdateService.getByToken(token))
+      .movie_id as number;
     const { id } = req.params;
     const idAsInt = parseInt(id as string);
-    if (movieId !== idAsInt){
+    if (movieId !== idAsInt) {
       throw new AppError(400, 'Invalid Token');
     }
 
-    const response = await movieService.update(
-      idAsInt,
-      req.body,
-    );
+    const response = await movieService.update(idAsInt, req.body);
     return res.status(200).send(response);
   } catch (e) {
     next(e);

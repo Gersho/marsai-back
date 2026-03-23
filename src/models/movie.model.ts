@@ -166,7 +166,7 @@ const createRate = async (
 const update = async (id: number, movie: MovieRequest): Promise<number> => {
   const fields: string[] = [];
   const values: (string | number | Date | boolean)[] = [];
-console.info(movie);
+// console.info(movie);
   const { token, stillsUrls, director, collaborators, ...movieCleaned} = movie;
   for (const [key, value] of Object.entries(movieCleaned)) {
     fields.push(`${toSnakeCase(key)} = ?`);

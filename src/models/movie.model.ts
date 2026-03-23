@@ -2,7 +2,6 @@ import type { ResultSetHeader } from 'mysql2';
 import db from '../database/connection.js';
 import type { MovieRequest } from '../types/schemas/MovieRequest.schema.js';
 import type Movie from '../types/interfaces/Movie.interface.js';
-import type Rate from '../types/interfaces/rate.interface.js';
 import type { MovieFindAllResponse } from '../types/interfaces/MovieFindAllResponse.interface.js';
 import type { MovieCount } from '../types/interfaces/MovieFindAllResponse.interface.js';
 import { toSnakeCase } from '../helpers/string-utils.js';
@@ -127,42 +126,6 @@ const remove = async (id: number): Promise<number> => {
   return result.affectedRows;
 };
 
-const getRateByMovieIdAndJuryId = async (
-  juryId: number,
-  movieId: number,
-): Promise<Rate[]> => {
-  const [result] = await db.execute(
-    'SELECT id FROM ratings WHERE jury_id = ? AND movie_id = ?',
-    [juryId, movieId],
-  );
-
-  return result as Rate[];
-};
-
-const updateRateByMovieIdAndJuryId = async (
-  juryId: number,
-  movieId: number,
-  rate: number,
-): Promise<number> => {
-  const [result] = await db.execute<ResultSetHeader>(
-    'UPDATE ratings SET rating = ? WHERE jury_id = ? AND movie_id = ?',
-    [rate, juryId, movieId],
-  );
-
-  return result.affectedRows;
-};
-
-const createRate = async (
-  juryId: number,
-  movieId: number,
-  rating: number,
-): Promise<number> => {
-  const [result] = await db.execute<ResultSetHeader>(
-    'INSERT INTO ratings (rating, jury_id, movie_id) VALUES (?, ?, ?)',
-    [rating, juryId, movieId],
-  );
-  return result.insertId;
-};
 const update = async (id: number, movie: MovieRequest): Promise<number> => {
   const fields: string[] = [];
   const values: (string | number | Date | boolean)[] = [];
@@ -239,9 +202,6 @@ const movieModel = {
   getById,
   getBySlug,
   remove,
-  getRateByMovieIdAndJuryId,
-  updateRateByMovieIdAndJuryId,
-  createRate,
   update,
   getAllSorted,
 };

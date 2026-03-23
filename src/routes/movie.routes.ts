@@ -1,9 +1,12 @@
 import express from 'express';
 import movieController from '../controllers/movie.controller.js';
+import ratingController from '../controllers/rating.controller.js';
 import { isLogged } from '../middlewares/is-logged.js';
 import { isAdmin } from '../middlewares/is-admin.js';
+import { isJury } from '../middlewares/is-jury.js';
 import { validate } from '../middlewares/validate.js';
 import { MovieRequestSchema } from '../types/schemas/MovieRequest.schema.js';
+import { RatingRequestSchema } from '../types/schemas/rating-request.schema.js';
 import { upload } from '../middlewares/upload.js';
 
 const movieRouter = express.Router();
@@ -16,11 +19,17 @@ movieRouter.post(
   validate(MovieRequestSchema),
   movieController.create,
 );
+
 movieRouter.post(
-  '/movies/:movieId/rate',
+  '/:id/ratings',
   isLogged,
-  movieController.ratingsPost,
+  isJury,
+  validate(RatingRequestSchema),
+  ratingController.rateMovie,
 );
+
+movieRouter.get('/:id/ratings', ratingController.getRatings);
+
 movieRouter.delete('/:id', movieController.remove);
 movieRouter.put('/:id', isLogged, isAdmin, movieController.adminUpdate);
 movieRouter.get('/:slug', movieController.getBySlug);

@@ -10,7 +10,6 @@ import db from '../database/connection.js';
 import collaboratorModel from '../models/collaborator.model.js';
 import imageModel from '../models/image.model.js';
 import AppError from '../helpers/AppError.js';
-import type { RatingRequest } from '../types/schemas/rating-request.schema.js';
 import type { MovieFindAllResponse } from '../types/interfaces/MovieFindAllResponse.interface.js';
 import emailService from './email.service.js';
 import movieUpdateModel from '../models/movie_update.model.js';
@@ -103,31 +102,6 @@ const update = async (
   return affectedRows;
 };
 
-const ratingPost = async (
-  { movieId, rating }: RatingRequest,
-  juryId: number,
-): Promise<void> => {
-  try {
-    const movie = await movieModel.getById(movieId);
-    if (movie === null) {
-      throw new AppError(404, 'Movie not found');
-    }
-
-    const [existing] = await movieModel.getRateByMovieIdAndJuryId(
-      juryId,
-      movieId,
-    );
-    if (existing !== undefined && existing.length > 0) {
-      await movieModel.updateRateByMovieIdAndJuryId(juryId, movieId, rating);
-    } else {
-      await movieModel.createRate(juryId, movieId, rating);
-    }
-  } catch (err) {
-    console.error(err);
-    throw err;
-  }
-};
-
 const getAllSorted = async (
   page: number,
   sort: string,
@@ -173,7 +147,6 @@ const adminUpdate = async (
 
 const movieService = {
   create,
-  ratingPost,
   getAll,
   getById,
   getBySlug,

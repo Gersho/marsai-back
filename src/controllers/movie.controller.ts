@@ -16,16 +16,6 @@ const create: RequestHandler = async (req, res, next) => {
   }
 };
 
-const ratingsPost: RequestHandler = async (req, res, next) => {
-  try {
-    await movieService.ratingPost(req.body, req.user_id);
-
-    return res.status(201).send();
-  } catch (e) {
-    next(e);
-  }
-};
-
 const getAll: RequestHandler = async (req, res, next) => {
   try {
     const { page, type, search } = req.query;
@@ -161,7 +151,6 @@ const movieController = {
   create,
   remove,
   update,
-  ratingsPost,
   getAllSorted,
   adminUpdate,
 };

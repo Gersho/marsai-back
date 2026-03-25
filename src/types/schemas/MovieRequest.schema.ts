@@ -7,6 +7,7 @@ import {
 } from '../../helpers/upload-const.js';
 import { getVideoDurationInSeconds } from 'get-video-duration';
 import { Languages } from '../enums/languages.enum.js';
+import { MovieStatus } from '../enums/movie-status.enum.js';
 
 const parseJson = (value: unknown, ctx: z.RefinementCtx) => {
   if (typeof value === 'string') {
@@ -79,6 +80,7 @@ const VideoUrlField = VideoFileSchema.transform((file) => file.location);
 export const MovieRequestSchema = z
   .object({
     token: z.string().nonempty().optional(),
+    status: z.enum(MovieStatus).optional(),
     originalTitle: z.string().min(1).max(255),
     englishTitle: z.string().min(1).max(255),
     slug: z.string().optional(),

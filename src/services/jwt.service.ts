@@ -20,7 +20,7 @@ const signRefreshToken = (payload: TokenPayload): string => {
     { id: payload.id, roles: payload.roles },
     process.env.JWT_SECRET,
     {
-      expiresIn: '5m',
+      expiresIn: '24h',
     },
   );
 };

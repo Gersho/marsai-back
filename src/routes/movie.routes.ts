@@ -8,11 +8,14 @@ import { validate } from '../middlewares/validate.js';
 import { MovieRequestSchema } from '../types/schemas/MovieRequest.schema.js';
 import { RatingRequestSchema } from '../types/schemas/rating-request.schema.js';
 import { upload } from '../middlewares/upload.js';
+import { validateParamsAndQuery } from '../middlewares/validate-all.js';
+import { RandomMovieRequestSchema } from '../types/schemas/random-movie-schema.js';
 
 const movieRouter = express.Router();
 
 movieRouter.get('/', movieController.getAll);
 movieRouter.get('/sort', movieController.getAllSorted);
+movieRouter.get('/random', validateParamsAndQuery(RandomMovieRequestSchema), movieController.getRandom);
 movieRouter.post(
   '/',
   upload,

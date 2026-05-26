@@ -14,3 +14,8 @@ export const setTokensInCookies = (
     path: '/auth/refresh-token',
   });
 };
+
+export const unsetTokensInCookies = (res: Response): void =>{
+  res.clearCookie('accessToken');
+  res.clearCookie('refreshToken');
+};

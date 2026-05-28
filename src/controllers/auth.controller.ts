@@ -42,6 +42,7 @@ const refreshToken: RequestHandler = (req: Request, res, next) => {
     return res.send(tokens);
   } catch (e) {
     if (e instanceof jwt.TokenExpiredError) {
+      unsetTokensInCookies(res);
       return res.status(400).send({ message: 'Refresh token expired' });
     }
     next(e);

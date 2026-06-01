@@ -8,11 +8,14 @@ import { validate } from '../middlewares/validate.js';
 import { MovieRequestSchema } from '../types/schemas/MovieRequest.schema.js';
 import { RatingRequestSchema } from '../types/schemas/rating-request.schema.js';
 import { upload } from '../middlewares/upload.js';
+import { validateParamsAndQuery } from '../middlewares/validate-all.js';
+import { RandomMovieRequestSchema } from '../types/schemas/random-movie-schema.js';
 
 const movieRouter = express.Router();
 
 movieRouter.get('/', movieController.getAll);
-movieRouter.get('/sort', movieController.getAllSorted);
+movieRouter.get('/sort', isLogged, movieController.getAllSorted);
+movieRouter.get('/random', validateParamsAndQuery(RandomMovieRequestSchema), movieController.getRandom);
 movieRouter.post(
   '/',
   upload,
@@ -33,7 +36,6 @@ movieRouter.get('/:id/ratings', ratingController.getRatings);
 movieRouter.delete('/:id', movieController.remove);
 movieRouter.put('/:id', isLogged, isAdmin, movieController.adminUpdate);
 movieRouter.get('/:slug', movieController.getBySlug);
-//TODO new route for PUT by director
 movieRouter.post(
   '/edit/:id',
   upload,

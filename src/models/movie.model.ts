@@ -32,9 +32,10 @@ const getAll = async (
     'SELECT COUNT(m.id) AS total \
                     FROM movie m \
                     INNER JOIN collaborator c ON m.id = c.movie_id \
-                    WHERE c.contribution = "Director"\
+                    WHERE is_director = true \
                     AND m.english_title LIKE ? \
                     AND( m.is_hybrid = ? OR m.is_hybrid = ? )';
+                    // WHERE c.contribution = "Director"\
   const sqlData =
     'SELECT m.*, \
                     JSON_OBJECT( \
@@ -197,6 +198,29 @@ const getAllSorted = async (
   return { total: resCount, data } as MovieFindAllResponse;
 };
 
+
+// SELECT column FROM table
+// ORDER BY RAND()
+// LIMIT 1
+
+const getRandom = async (qt: number): Promise<Movie[]> => {
+    const sqlData =
+    'SELECT m.*, \
+                    JSON_OBJECT( \
+                        "gender", c.gender,\
+                        "firstname", c.firstname,\
+                        "lastname", c.lastname\
+                      )  AS director\
+              FROM movie m \
+              INNER JOIN collaborator c ON m.id = c.movie_id \
+              WHERE c.is_director = true\
+              ORDER BY RAND() \
+              LIMIT ?';
+
+  const [data] = await db.query<Movie[]>(sqlData, [qt]);
+  return data;
+};
+
 const movieModel = {
   create,
   getAll,
@@ -205,6 +229,7 @@ const movieModel = {
   remove,
   update,
   getAllSorted,
+  getRandom
 };
 
 export default movieModel;

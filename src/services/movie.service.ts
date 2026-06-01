@@ -143,6 +143,13 @@ const adminUpdate = async (
   return affectedRows;
 };
 
+const getRandom = async (qt: number) => {
+  const movies = await movieModel.getRandom(qt);
+  if (!movies) throw new AppError(404, 'film not found');
+  return movies;
+
+}
+
 const movieService = {
   create,
   getAll,
@@ -152,6 +159,7 @@ const movieService = {
   update,
   getAllSorted,
   adminUpdate,
+  getRandom
 };
 
 export default movieService;

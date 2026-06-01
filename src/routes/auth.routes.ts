@@ -7,6 +7,7 @@ import { isLogged } from '../middlewares/is-logged.js';
 const authRouter = express.Router();
 
 authRouter.post('/login', validate(AuthRequestSchema), authController.login);
+authRouter.get('/logout', isLogged, authController.logout);
 authRouter.post('/refresh-token', authController.refreshToken);
 authRouter.get('/me', isLogged, authController.getMe);
 

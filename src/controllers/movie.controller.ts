@@ -142,6 +142,17 @@ const adminUpdate: RequestHandler = async (req, res, next) => {
   }
 };
 
+const getRandom: RequestHandler = async (req, res, next) => {
+  try {
+    const { qt } = req.query;
+    const qtAsInt = parseInt(qt as string);
+    const response = await movieService.getRandom(qtAsInt);
+     return res.send(response);
+  } catch (e) {
+    next(e);
+  }
+};
+
 const movieController = {
   getAll,
   getById,
@@ -151,6 +162,7 @@ const movieController = {
   update,
   getAllSorted,
   adminUpdate,
+  getRandom
 };
 
 export default movieController;

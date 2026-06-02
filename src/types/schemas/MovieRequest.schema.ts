@@ -74,8 +74,8 @@ const CollaboratorsSchema = z.object({
 
 export type Collaborator = z.infer<typeof CollaboratorsSchema>;
 
-const ImageUrlField = ImageFileSchema.transform((file) => file.location);
-const VideoUrlField = VideoFileSchema.transform((file) => file.location);
+const ImageUrlField = ImageFileSchema.transform((file) => process.env.SCALEWAY_VIRTUAL_ENDPOINT + file.key);
+const VideoUrlField = VideoFileSchema.transform((file) => process.env.SCALEWAY_VIRTUAL_ENDPOINT + file.key);
 
 export const MovieRequestSchema = z
   .object({

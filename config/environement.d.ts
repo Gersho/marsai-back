@@ -16,6 +16,7 @@ declare global {
       SCALEWAY_BUCKET_NAME: string;
       SCALEWAY_REGION: string;
       SCALEWAY_FOLDER: string;
+      SCALEWAY_VIRTUAL_ENDPOINT: string;
     }
   }
 }

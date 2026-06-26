@@ -20,7 +20,7 @@ const login: RequestHandler = async (req, res, next) => {
   }
 };
 
-const logout: RequestHandler = async (req, res, next) => {
+const logout: RequestHandler = async (_req, res, next) => {
   try {
     unsetTokensInCookies(res);
     return res.send({ message: "Successfully logged out"});

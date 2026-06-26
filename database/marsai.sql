@@ -1,3 +1,5 @@
+USE `marsai`;
+
 -- Table user
 CREATE TABLE IF NOT EXISTS `user` (
     `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,

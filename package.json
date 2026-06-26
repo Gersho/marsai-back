@@ -4,14 +4,15 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cpx \"src/**/*.html\" dist",
     "start": "npm run build && node --env-file=.env ./dist/server.js",
     "dev": "tsx watch --env-file=.env src/server.ts",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
     "format": "npx prettier --write \"src/**/*.ts\"",
     "prepare": "husky",
-    "seed": "tsx --env-file=.env src/database/seed.ts"
+    "seed": "tsx --env-file=.env src/database/seed.ts",
+    "seed:noenv": "tsx src/database/seed.ts"
   },
   "repository": {
     "type": "git",
@@ -55,6 +56,7 @@
     "@types/nodemailer": "^7.0.9",
     "@typescript-eslint/eslint-plugin": "^8.53.1",
     "@typescript-eslint/parser": "^8.53.1",
+    "cpx2": "^9.0.0",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",

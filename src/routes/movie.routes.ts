@@ -16,12 +16,12 @@ const movieRouter = express.Router();
 movieRouter.get('/', movieController.getAll);
 movieRouter.get('/sort', isLogged, movieController.getAllSorted);
 movieRouter.get('/random', validateParamsAndQuery(RandomMovieRequestSchema), movieController.getRandom);
-movieRouter.post(
-  '/',
-  upload,
-  validate(MovieRequestSchema),
-  movieController.create,
-);
+// movieRouter.post(
+//   '/',
+//   upload,
+//   validate(MovieRequestSchema),
+//   movieController.create,
+// );
 
 movieRouter.post(
   '/:id/ratings',
